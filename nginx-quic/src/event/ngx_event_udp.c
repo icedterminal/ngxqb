@@ -12,13 +12,6 @@
 
 #if !(NGX_WIN32)
 
-struct ngx_udp_connection_s {
-    ngx_rbtree_node_t   node;
-    ngx_connection_t   *connection;
-    ngx_buf_t          *buffer;
-};
-
-
 static void ngx_close_accepted_udp_connection(ngx_connection_t *c);
 static ssize_t ngx_udp_shared_recv(ngx_connection_t *c, u_char *buf,
     size_t size);

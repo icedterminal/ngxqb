@@ -44,7 +44,6 @@ if test -z "$NGX_PLATFORM"; then
 else
     echo "building for $NGX_PLATFORM"
     NGX_SYSTEM=$NGX_PLATFORM
-    NGX_MACHINE=i386
 fi
 
 . auto/cc/conf
