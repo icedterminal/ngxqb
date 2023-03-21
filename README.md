@@ -5,3 +5,7 @@ This is a custom build of NGINX server with OpenSSL 3+ (QUIC) and Brotli compile
 Absolutely no support is provided. This is for my own personal use. You are welcome to use it if you find it useful.
 
 Target OS: Ubuntu 20.04 and later.
+
+```
+git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb; git submodule update --init; cd ngx_brotli; git submodule update --init; cd ..;
+```
