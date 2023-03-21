@@ -4,3 +4,9 @@
 [submodule "ngx_brotli"]
 	path = ngx_brotli
 	url = https://github.com/google/ngx_brotli
+[submodule "zlib"]
+	path = zlib
+	url = https://github.com/madler/zlib
+[submodule "pcre2"]
+	path = pcre2
+	url = https://github.com/PCRE2Project/pcre2
