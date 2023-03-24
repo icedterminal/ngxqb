@@ -51,6 +51,7 @@ git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb/nginx*; git submod
 --with-stream_ssl_preread_module \
 --with-stream_quic_module \
 --with-zlib=../zlib \
+--with-pcre=../pcre2 \
 --with-openssl=../openssl \
 --with-openssl-opt=enable-ktls \
 --with-openssl-opt=enable-fips \
