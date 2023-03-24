@@ -75,3 +75,47 @@ Build:
 ```
 make
 ```
+Once building completes, you won't have the required structure in place to start NGINX. You'll need to do this.
+```
+cp objs/nginx /usr/sbin/nginx; chmod 755 /usr/sbin/nginx
+```
+Create a startup service:
+```
+[nano|gedit] /lib/systemd/system/nginx.service
+```
+Paste the following contents in:
+```
+[Unit]
+Description=nginx - high performance web server
+Documentation=https://nginx.org/en/docs/
+After=network-online.target remote-fs.target nss-lookup.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/nginx.pid
+ExecStart=/usr/sbin/nginx -c /etc/nginx/nginx.conf
+ExecReload=/bin/sh -c "/bin/kill -s HUP $(/bin/cat /var/run/nginx.pid)"
+ExecStop=/bin/sh -c "/bin/kill -s TERM $(/bin/cat /var/run/nginx.pid)"
+
+[Install]
+WantedBy=multi-user.target
+```
+Create the initial directories:
+```
+mkdir -p /etc/nginx/{dh,modules,sites-available,sites-disabled,conf.d} /var/cache/nginx/{client_temp,proxy_temp,fastcgi_temp,uwsgi_temp,scgi_temp} /var/log/nginx
+```
+Set the permissions:
+```bash
+chown www-data:adm /var/log/nginx; chmod 755 /var/log/nginx; find /var/cache/nginx -type d | xargs chown www-data:root; find /var/cache/nginx -type d | xargs chmod 755
+```
+Copy the files from `conf` to the proper location:
+```
+cp -r conf/. /etc/nginx/
+```
+Enable and start
+```
+systemctl enable nginx; systemctl start nginx
+```
+
+You check your NGINX build information with `nginx -V`.
