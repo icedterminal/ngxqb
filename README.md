@@ -4,12 +4,14 @@ This is a custom build of NGINX server with OpenSSL 3+ (QUIC), Brotli, Zlib, and
 
 Absolutely no support is provided. This is for my own personal use. You are welcome to use it if you find it useful.
 
-NGINX QUIC build is sourced from the official repo and mirrored here.
+NGINX QUIC build is sourced from the official repo and mirrored here:
 ```
 hg clone https://hg.nginx.org/nginx-quic; hg update quic;
 ```
+Download the zip release of PCRE2 from the offical repo:
+https://github.com/PCRE2Project/pcre2/releases/
 
-Submodule links to zlib, openssl and brotli are present to make building easier.
+Zlib, OpenSSL and Brotli are submodules.
 
 Target OS: Ubuntu 20.04 and later.
 
@@ -18,7 +20,8 @@ Prebuilt is provided under Releases. If you prefer to build yourself, you can do
 
 Prep work:
 ```
-apt install git gcc cmake mercurial libpcre3 libpcre3-dev zlib1g zlib1g-dev libperl-dev libxslt1-dev libgd-ocaml-dev libgeoip-dev -y; git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb/nginx*; git submodule update --init; cd ../ngx_brotli; git submodule update --init; cd ..; wget https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.42/pcre2-10.42.zip; unzip pcre2*.zip; rm pcre2*.zip; cd pcre*; chmod +x configure; ./configure; cd ../nginx*;
+apt install git gcc cmake mercurial libpcre3 libpcre3-dev zlib1g zlib1g-dev libperl-dev libxslt1-dev libgd-ocaml-dev libgeoip-dev -y;
+git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb/nginx*; git submodule update --init; cd ../ngx_brotli; git submodule update --init; cd ..; wget https://github.com/PCRE2Project/pcre2/releases/download/pcre2-xx.xx.zip; unzip pcre2*.zip; rm pcre2*.zip; cd pcre*; chmod +x configure; ./configure; cd ../nginx*;
 ```
 Configure build:
 ```
