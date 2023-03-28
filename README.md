@@ -2,22 +2,25 @@
 
 This is a custom build of NGINX server with OpenSSL 3+ (QUIC), Brotli, Zlib, and PCRE2 compiled.
 
-Absolutely no support is provided. This is for my own personal use. You are welcome to use it if you find it useful.
+*Absolutely no support is provided.* This is for my own personal use. You are welcome to use it though.
 
 NGINX QUIC build is sourced from the official repo and mirrored here:
 ```
 hg clone https://hg.nginx.org/nginx-quic; hg update quic;
 ```
-Download the zip release of PCRE2 from the offical repo:
-https://github.com/PCRE2Project/pcre2/releases/
+Download the zip release of PCRE2 from the offical repo: https://github.com/PCRE2Project/pcre2/releases/
 
 Zlib, OpenSSL and Brotli are submodules.
 
 Target OS: Ubuntu 20.04 and later.
 
-## Build yourself
-Prebuilt is provided under Releases. If you prefer to build yourself, you can do so.
+## Prebuilt
+1. Download the zip
+2. Place it at the root of the system
+3. `unzip -o nginx.zip`
+4. `systemctl daemon-reload; systemctl enable nginx; systemctl start nginx`
 
+## Build yourself
 Prep work:
 ```
 apt install git gcc cmake mercurial libpcre3 libpcre3-dev zlib1g zlib1g-dev libperl-dev libxslt1-dev libgd-ocaml-dev libgeoip-dev -y;
