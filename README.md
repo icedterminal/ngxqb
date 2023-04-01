@@ -1,32 +1,38 @@
 # NGXQB
+<p align="center">
+:warning: <em>Absolutely no support is provided. This is for my own personal use. You are welcome to use it though.</em> :warning:
+</p>
+A custom build of NGINX server for the modern web with OpenSSL 3+ (HTTP/3 + QUIC), Brotli, Zlib, and PCRE2 compiled into one.
 
-This is a custom build of NGINX server with OpenSSL 3+ (QUIC), Brotli, Zlib, and PCRE2 compiled.
+---
 
-*Absolutely no support is provided.* This is for my own personal use. You are welcome to use it though.
+| Component | Source |
+| --- | --- |
+| NGINX QUIC | Mirrored via `hg clone https://hg.nginx.org/nginx-quic; hg update quic;` |
+| PCRE2 | Download via https://github.com/PCRE2Project/pcre2/releases/ |
+| Zlib | Submodule via https://github.com/madler/zlib |
+| OpenSSL | Submodule via https://github.com/quictls/openssl |
+| Brotli | Submodule via https://github.com/google/ngx_brotli |
 
-NGINX QUIC build is sourced from the official repo and mirrored here:
-```
-hg clone https://hg.nginx.org/nginx-quic; hg update quic;
-```
-Download the zip release of PCRE2 from the offical repo: https://github.com/PCRE2Project/pcre2/releases/
-
-Zlib, OpenSSL and Brotli are submodules.
-
-Target OS: Ubuntu 20.04 and later.
+**Target OS:** Ubuntu 20.04 and later. 18.04 and earlier is untested. No builds or instructions for containers, or other distirubtions will be provided. I have no interest.
 
 ## Prebuilt
-1. Download the zip
-2. Place it at the root of the system
+1. Download the zip from releases.
+2. Place it at the root of your system.
 3. `unzip -o nginx.zip`
 4. `systemctl daemon-reload; systemctl enable nginx; systemctl start nginx`
 
+Visit `http://localhost:80` or `http://127.0.0.1:80` to verify. You should see `404 Not Found` since there is no included HTML page.
+
 ## Build yourself
-Prep work:
+### Prep
 ```
 apt install git gcc cmake mercurial libpcre3 libpcre3-dev zlib1g zlib1g-dev libperl-dev libxslt1-dev libgd-ocaml-dev libgeoip-dev -y;
 git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb/nginx*; git submodule update --init; cd ../ngx_brotli; git submodule update --init; cd ..; wget https://github.com/PCRE2Project/pcre2/releases/download/pcre2-xx.xx.zip; unzip pcre2*.zip; rm pcre2*.zip; cd pcre*; chmod +x configure; ./configure; cd ../nginx*;
 ```
-Configure build:
+You will need to modify the PCRE aspect of these commands.
+
+### Configure
 ```
 ./auto/configure \
 `nginx -V 2>&1 | sed "s/ \-\-/ \\\ \n\t--/g" | grep "\-\-" | grep -ve opt= -e param= -e build=` \
@@ -77,7 +83,7 @@ Configure build:
 --with-cc-opt='-I/src/libressl/build/include -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fPIC' \
 --with-ld-opt='-L/src/libressl/build/lib -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -Wl,--as-needed -pie'
 ```
-Build:
+### Build and install
 ```
 make
 ```
@@ -124,4 +130,8 @@ Enable and start
 systemctl enable nginx; systemctl start nginx
 ```
 
-You check your NGINX build information with `nginx -V`.
+You can check your NGINX build information with `nginx -V`.
+
+## Verify
+- https://http3check.net/
+- https://geekflare.com/tools/http3-test
