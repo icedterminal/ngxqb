@@ -25,15 +25,15 @@ Visit `http://localhost:80` or `http://127.0.0.1:80` to verify. You should see t
 
 ## Build yourself
 ### Prep
-```
+```bash
 apt install git gcc cmake mercurial libpcre3 libpcre3-dev zlib1g zlib1g-dev libperl-dev libxslt1-dev libgd-ocaml-dev libgeoip-dev -y;
 ```
-```
+```bash
 git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb/nginx*; git submodule update --init; cd ../ngx_brotli; git submodule update --init; cd ..; wget https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.42/pcre2-10.42.zip; unzip pcre2-10.42.zip; rm pcre2-10.42.zip; cd pcre2-10.42; chmod +x configure; ./configure; cd ../nginx*;
 ```
 
 ### Configure
-```
+```bash
 ./auto/configure \
 `nginx -V 2>&1 | sed "s/ \-\-/ \\\ \n\t--/g" | grep "\-\-" | grep -ve opt= -e param= -e build=` \
 --build=nginx-quic \
@@ -84,15 +84,15 @@ git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb/nginx*; git submod
 --with-ld-opt='-L/src/libressl/build/lib -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -Wl,--as-needed -pie'
 ```
 ### Build and install
-```
+```bash
 make
 ```
 Once building completes, you won't have the required structure in place to start NGINX. You'll need to do this:
-```
+```bash
 cp objs/nginx /usr/sbin/nginx; chmod 755 /usr/sbin/nginx
 ```
 Create a startup service:
-```
+```bash
 [nano|gedit] /lib/systemd/system/nginx.service
 ```
 Paste the following contents in:
@@ -114,7 +114,7 @@ ExecStop=/bin/sh -c "/bin/kill -s TERM $(/bin/cat /var/run/nginx.pid)"
 WantedBy=multi-user.target
 ```
 Create the initial directories:
-```
+```bash
 mkdir -p /etc/nginx/{dh,modules,sites-available,sites-disabled,conf.d} /var/cache/nginx/{client_temp,proxy_temp,fastcgi_temp,uwsgi_temp,scgi_temp} /var/log/nginx /var/www/html 
 ```
 Set the permissions:
@@ -122,11 +122,11 @@ Set the permissions:
 chown www-data:adm /var/log/nginx; chmod 755 /var/log/nginx; find /var/cache/nginx -type d | xargs chown www-data:root; find /var/cache/nginx -type d | xargs chmod 755
 ```
 Copy the default files to the proper location:
-```
+```bash
 cp -r conf/. /etc/nginx/; cp -r docs/html/. /var/www/html/;
 ```
 Enable and start:
-```
+```bash
 systemctl daemon-reload; systemctl enable nginx; systemctl start nginx
 ```
 
