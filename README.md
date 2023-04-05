@@ -22,7 +22,7 @@ A custom build of NGINX server for the modern web with OpenSSL 3+ (HTTP/3 + QUIC
 3. `unzip -o nginx.zip`
 4. `systemctl daemon-reload; systemctl enable nginx; systemctl start nginx`
 
-Visit `http://localhost:80` or `http://127.0.0.1:80` to verify. You should see `404 Not Found` since there is no included HTML page.
+Visit `http://localhost:80` or `http://127.0.0.1:80` to verify. You should see welcome / success page.
 
 ## Build yourself
 ### Prep
@@ -116,15 +116,15 @@ WantedBy=multi-user.target
 ```
 Create the initial directories:
 ```
-mkdir -p /etc/nginx/{dh,modules,sites-available,sites-disabled,conf.d} /var/cache/nginx/{client_temp,proxy_temp,fastcgi_temp,uwsgi_temp,scgi_temp} /var/log/nginx
+mkdir -p /etc/nginx/{dh,modules,sites-available,sites-disabled,conf.d} /var/cache/nginx/{client_temp,proxy_temp,fastcgi_temp,uwsgi_temp,scgi_temp} /var/log/nginx /var/www/html 
 ```
 Set the permissions:
 ```bash
 chown www-data:adm /var/log/nginx; chmod 755 /var/log/nginx; find /var/cache/nginx -type d | xargs chown www-data:root; find /var/cache/nginx -type d | xargs chmod 755
 ```
-Copy the files from `conf` to the proper location:
+Copy the default files to the proper location:
 ```
-cp -r conf/. /etc/nginx/
+cp -r conf/. /etc/nginx/; cp -r docs/html/. /var/www/html/;
 ```
 Enable and start
 ```
