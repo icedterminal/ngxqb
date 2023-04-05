@@ -28,9 +28,10 @@ Visit `http://localhost:80` or `http://127.0.0.1:80` to verify. You should see `
 ### Prep
 ```
 apt install git gcc cmake mercurial libpcre3 libpcre3-dev zlib1g zlib1g-dev libperl-dev libxslt1-dev libgd-ocaml-dev libgeoip-dev -y;
-git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb/nginx*; git submodule update --init; cd ../ngx_brotli; git submodule update --init; cd ..; wget https://github.com/PCRE2Project/pcre2/releases/download/pcre2-xx.xx.zip; unzip pcre2*.zip; rm pcre2*.zip; cd pcre*; chmod +x configure; ./configure; cd ../nginx*;
 ```
-You will need to modify the PCRE aspect of these commands.
+```
+git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb/nginx*; git submodule update --init; cd ../ngx_brotli; git submodule update --init; cd ..; wget https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.42/pcre2-10.42.zip; unzip pcre2-10.42.zip; rm pcre2-10.42.zip; cd pcre2-10.42; chmod +x configure; ./configure; cd ../nginx*;
+```
 
 ### Configure
 ```
@@ -75,7 +76,7 @@ You will need to modify the PCRE aspect of these commands.
 --with-stream_ssl_preread_module \
 --with-stream_quic_module \
 --with-zlib=../zlib \
---with-pcre=../pcre2 \
+--with-pcre=../pcre2-10.42 \
 --with-openssl=../openssl \
 --with-openssl-opt=enable-ktls \
 --with-openssl-opt=enable-fips \
