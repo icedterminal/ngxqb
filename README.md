@@ -14,15 +14,14 @@ A custom build of NGINX server for the modern web with OpenSSL 3+ (HTTP/3 + QUIC
 | OpenSSL | Submodule via https://github.com/quictls/openssl |
 | Brotli | Submodule via https://github.com/google/ngx_brotli |
 
-**Target OS:** Ubuntu 20.04 and later. 18.04 and earlier is untested. No builds or instructions for containers, or other distirubtions will be provided. I have no interest.
+**Target OS:** Ubuntu 20.04 and later. 18.04 and earlier is untested. No builds or instructions for containers, or other distributions will be provided. I have no interest.
 
 ## Prebuilt
 1. Download the zip from releases.
-2. Place it at the root of your system.
-3. `unzip -o nginx.zip`
-4. `systemctl daemon-reload; systemctl enable nginx; systemctl start nginx`
+2. Place the zip at the root of your system.
+3. `unzip -o nginx.zip; systemctl daemon-reload; systemctl enable nginx; systemctl start nginx`
 
-Visit `http://localhost:80` or `http://127.0.0.1:80` to verify. You should see welcome / success page.
+Visit `http://localhost:80` or `http://127.0.0.1:80` to verify. You should see the welcome / success page.
 
 ## Build yourself
 ### Prep
@@ -88,7 +87,7 @@ git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb/nginx*; git submod
 ```
 make
 ```
-Once building completes, you won't have the required structure in place to start NGINX. You'll need to do this.
+Once building completes, you won't have the required structure in place to start NGINX. You'll need to do this:
 ```
 cp objs/nginx /usr/sbin/nginx; chmod 755 /usr/sbin/nginx
 ```
@@ -126,9 +125,9 @@ Copy the default files to the proper location:
 ```
 cp -r conf/. /etc/nginx/; cp -r docs/html/. /var/www/html/;
 ```
-Enable and start
+Enable and start:
 ```
-systemctl enable nginx; systemctl start nginx
+systemctl daemon-reload; systemctl enable nginx; systemctl start nginx
 ```
 
 You can check your NGINX build information with `nginx -V`.
