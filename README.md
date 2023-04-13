@@ -14,14 +14,14 @@ A custom build of NGINX server for the modern web with OpenSSL 3+ (HTTP/3 + QUIC
 | OpenSSL | Submodule via https://github.com/quictls/openssl |
 | Brotli | Submodule via https://github.com/google/ngx_brotli |
 
-**Target OS:** Ubuntu 20.04 and later. 18.04 and earlier is untested. No builds or instructions for containers, or other distributions will be provided. I have no interest.
+**Target OS:** Ubuntu 20.04 and later. 18.04 and earlier is untested. No builds or instructions for containers or other distributions will be provided. I have no interest.
 
 ## Prebuilt
 1. Download the zip from releases.
 2. Place the zip at the root of your system.
 3. `unzip -o nginx.zip; systemctl daemon-reload; systemctl enable nginx; systemctl start nginx`
 
-Visit `http://localhost:80` or `http://127.0.0.1:80` to verify. You should see the welcome / success page.
+Visit `http://localhost:80` or `http://127.0.0.1:80` to verify.
 
 ## Build yourself
 ### Prep
@@ -93,12 +93,12 @@ cp objs/nginx /usr/sbin/nginx; chmod 755 /usr/sbin/nginx
 ```
 Create a startup service:
 ```bash
-[nano|gedit] /lib/systemd/system/nginx.service
+nano /lib/systemd/system/nginx.service
 ```
 Paste the following contents in:
 ```
 [Unit]
-Description=nginx - high performance web server
+Description=NGINX-QUIC web server
 Documentation=https://nginx.org/en/docs/
 After=network-online.target remote-fs.target nss-lookup.target
 Wants=network-online.target
