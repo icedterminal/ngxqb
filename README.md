@@ -6,13 +6,13 @@ A custom build of NGINX server for the modern web with OpenSSL 3+ (HTTP/3 + QUIC
 
 ---
 
-| Component | Source |
-| --- | --- |
-| NGINX QUIC | Mirrored via `hg clone https://hg.nginx.org/nginx-quic; hg update quic;` |
-| PCRE2 | Download via https://github.com/PCRE2Project/pcre2/releases/ |
-| Zlib | Submodule via https://github.com/madler/zlib |
-| OpenSSL | Submodule via https://github.com/quictls/openssl |
-| Brotli | Submodule via https://github.com/google/ngx_brotli |
+| Component | Source | Purpose |
+| --- | --- | -- |
+| NGINX QUIC | Mirrored via `hg clone https://hg.nginx.org/nginx-quic; hg update quic;` | server |
+| PCRE2 | Download via https://github.com/PCRE2Project/pcre2/releases/ | regular expressions |
+| Zlib | Submodule via https://github.com/madler/zlib | standard compression |
+| OpenSSL | Submodule via https://github.com/quictls/openssl | HTTPS capability |
+| Brotli | Submodule via https://github.com/google/ngx_brotli | improved compression |
 
 **Target OS:** Ubuntu 20.04 and later. 18.04 and earlier is untested. No builds or instructions for containers or other distributions will be provided. I have no interest.
 
