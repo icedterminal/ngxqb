@@ -33,6 +33,8 @@ git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb/nginx*; git submod
 ```
 
 ### Configure
+You may need to edit the configuration parameters to suit your needs. [A complete list is here](https://nginx.org/en/docs/configure.html).
+
 ```bash
 ./auto/configure \
 `nginx -V 2>&1 | sed "s/ \-\-/ \\\ \n\t--/g" | grep "\-\-" | grep -ve opt= -e param= -e build=` \
