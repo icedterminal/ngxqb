@@ -2,17 +2,19 @@
 <p align="center">
 :warning: <em>Absolutely no support is provided. This is for my own personal use. You are welcome to use it though.</em> :warning:
 </p>
-A custom build of NGINX server for the modern web with OpenSSL 3+ (HTTP/3 + QUIC), Brotli, Zlib, and PCRE2 compiled into one.
+A custom build of NGINX server for the modern web with OpenSSL 3+ (HTTP/3 + QUIC), Brotli and additional components compiled into one.
 
 ---
 
 | Component | Source | Purpose |
 | --- | --- | -- |
 | NGINX QUIC | Mirrored via `hg clone https://hg.nginx.org/nginx-quic; hg update quic;` | server |
+| OpenSSL | Submodule via https://github.com/quictls/openssl | HTTPS capability |
 | PCRE2 | Download via https://github.com/PCRE2Project/pcre2/releases/ | regular expressions |
 | Zlib | Submodule via https://github.com/madler/zlib | standard compression |
-| OpenSSL | Submodule via https://github.com/quictls/openssl | HTTPS capability |
 | Brotli | Submodule via https://github.com/google/ngx_brotli | improved compression |
+| Set misc | Submodule via https://github.com/openresty/set-misc-nginx-module | `set_xxx` directives |
+| Dev kit | Submodule via https://github.com/vision5/ngx_devel_kit | extend functionality |
 
 **Target OS:** Ubuntu 20.04 and later. 18.04 and earlier is untested. No builds or instructions for containers or other distributions will be provided. I have no interest.
 
@@ -29,7 +31,7 @@ Visit `http://localhost:80` or `http://127.0.0.1:80` to verify.
 apt install git gcc cmake mercurial libpcre3 libpcre3-dev zlib1g zlib1g-dev libperl-dev libxslt1-dev libgd-ocaml-dev libgeoip-dev -y;
 ```
 ```bash
-git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb/nginx*; git submodule update --init; cd ../ngx_brotli; git submodule update --init; cd ..; wget https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.42/pcre2-10.42.zip; unzip pcre2-10.42.zip; rm pcre2-10.42.zip; cd pcre2-10.42; chmod +x configure; ./configure; cd ../nginx*;
+git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb; git submodule update --init; cd ngx_brotli; git submodule update --init; cd ..; wget https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.42/pcre2-10.42.zip; unzip pcre2-10.42.zip; rm pcre2-10.42.zip; cd pcre2-10.42; chmod +x configure; ./configure; cd ../nginx*;
 ```
 
 ### Configure
@@ -64,12 +66,10 @@ You may need to edit the configuration parameters to suit your needs. [A complet
 --with-http_mp4_module \
 --with-http_realip_module \
 --with-http_ssl_module \
---with-http_stub_status_module \
 --with-http_v2_module \
 --with-http_v3_module \
 --with-http_image_filter_module \
 --with-http_xslt_module \
---with-http_dav_module \
 --with-http_stub_status_module \
 --with-stream \
 --with-stream_realip_module \
@@ -82,8 +82,10 @@ You may need to edit the configuration parameters to suit your needs. [A complet
 --with-openssl-opt=enable-ktls \
 --with-openssl-opt=enable-fips \
 --add-module=../ngx_brotli \
---with-cc-opt='-I/src/libressl/build/include -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fPIC' \
---with-ld-opt='-L/src/libressl/build/lib -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -Wl,--as-needed -pie'
+--add-module=../ngx_devel_kit \
+--add-module=../set-misc-nginx-module \
+--with-cc-opt='-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fPIC' \
+--with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -Wl,--as-needed -pie'
 ```
 ### Build and install
 ```bash
