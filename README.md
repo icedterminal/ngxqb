@@ -72,11 +72,15 @@ You may need to edit the configuration parameters to suit your needs. [A complet
 --with-http_mp4_module \
 --with-http_realip_module \
 --with-http_ssl_module \
+--with-http_stub_status_module \
 --with-http_v2_module \
 --with-http_v3_module \
 --with-http_image_filter_module \
---with-http_xslt_module \
+--with-http_dav_module \
 --with-http_stub_status_module \
+--with-http_slice_module \
+--with-mail \
+--with-mail_ssl_module \
 --with-stream \
 --with-stream_realip_module \
 --with-stream_ssl_module \
@@ -88,8 +92,6 @@ You may need to edit the configuration parameters to suit your needs. [A complet
 --with-openssl-opt=enable-ktls \
 --with-openssl-opt=enable-fips \
 --add-module=../ngx_brotli \
---add-module=../ngx_devel_kit \
---add-module=../set-misc-nginx-module \
 --with-cc-opt='-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fPIC' \
 --with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -Wl,--as-needed -pie'
 ```
@@ -97,9 +99,21 @@ You may need to edit the configuration parameters to suit your needs. [A complet
 ```bash
 make
 ```
-Once building completes, you won't have the required structure in place to start NGINX. You'll need to do this:
+Once building completes, you won't have the required structure in place to start NGINX. You'll need to do this as root:
 ```bash
-cp objs/nginx /usr/sbin/nginx; chmod 755 /usr/sbin/nginx
+sudo su
+```
+Create the initial directories:
+```bash
+mkdir -p /etc/nginx/{dh,modules,sites-available,sites-disabled,conf.d,html} /var/cache/nginx/{client_temp,proxy_temp,fastcgi_temp,uwsgi_temp,scgi_temp} /var/log/nginx /var/www/html 
+```
+Copy the default files to the proper location:
+```bash
+cp -r conf/. /etc/nginx/; cp -r docs/html/. /var/www/html/; cp -r docs/html/. /etc/nginx/html/; cp objs/nginx /usr/sbin/nginx; 
+```
+Set the permissions:
+```bash
+chmod 755 /usr/sbin/nginx; chown www-data:adm /var/log/nginx; chmod 755 /var/log/nginx; find /var/cache/nginx -type d | xargs chown www-data:root; find /var/cache/nginx -type d | xargs chmod 755
 ```
 Create a startup service:
 ```bash
@@ -122,18 +136,6 @@ ExecStop=/bin/sh -c "/bin/kill -s TERM $(/bin/cat /var/run/nginx.pid)"
 
 [Install]
 WantedBy=multi-user.target
-```
-Create the initial directories:
-```bash
-mkdir -p /etc/nginx/{dh,modules,sites-available,sites-disabled,conf.d} /var/cache/nginx/{client_temp,proxy_temp,fastcgi_temp,uwsgi_temp,scgi_temp} /var/log/nginx /var/www/html 
-```
-Set the permissions:
-```bash
-chown www-data:adm /var/log/nginx; chmod 755 /var/log/nginx; find /var/cache/nginx -type d | xargs chown www-data:root; find /var/cache/nginx -type d | xargs chmod 755
-```
-Copy the default files to the proper location:
-```bash
-cp -r conf/. /etc/nginx/; cp -r docs/html/. /var/www/html/;
 ```
 Enable and start:
 ```bash
