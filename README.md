@@ -27,9 +27,20 @@ You can either use the prebuilt binary, or build yourself. Installer packages ar
 ## Prebuilt
 1. Download the zip from releases.
 2. Place the zip at the root of your system.
-3. `unzip -o nginx.zip; systemctl daemon-reload; systemctl enable nginx; systemctl start nginx`
+3. Extract the contents
+    ```
+    unzip -o nginx.zip
+    ```
+4. Set the permissions
+    ```
+    chown www-data:adm /var/log/nginx; chmod 755 /var/log/nginx; find /var/cache/nginx -type d | xargs chown www-data:root; find /var/cache/nginx -type d | xargs chmod 755
+    ```
+5. Start the service
+    ```
+    systemctl daemon-reload; systemctl enable nginx; systemctl start nginx
+    ```
 
-Visit `http://localhost:80` or `http://127.0.0.1:80` to verify. Because there are no files present, you will be greeted by a `404` error page.
+Visit `http://localhost:80` or `http://127.0.0.1:80`. The default `nginx.conf` file uses the build prefix path of `/etc/nginx`. You should store configuration files here. Not web files. The default html files are placed here so you can verify you have a working service. You are encouraged to use `/var/www/html` as your root for web files.
 
 ## Build yourself
 ### Prep
