@@ -2,28 +2,34 @@
 <p align="center">
 :warning: <em>Absolutely no support is provided. This is for my own personal use. You are welcome to use it though.</em> :warning:
 </p>
+
 A custom build of NGINX server for the modern web with OpenSSL 3+ (HTTP/3 + QUIC), Brotli and additional components compiled into one.
+
+The target OS is Ubuntu 20.04 and later. 18.04 and earlier is untested. No builds or instructions for containers or other distributions will be provided. I have no interest. [NGINX Proxy Manager](https://nginxproxymanager.com/guide/) is available for those seeking containers or have little know-how. I do not know if this version of NGINX supports HTTP/3 + QUIC. This build is intended for my personal use. I prefer to write manual vhost/conf files or need the software to run on bare metal. If you fit this, feel free to use it.
 
 ---
 
-| Component | Source | Purpose |
-| --- | --- | -- |
-| NGINX QUIC | Mirrored via `hg clone https://hg.nginx.org/nginx-quic; hg update quic;` | server |
-| OpenSSL | Submodule via https://github.com/quictls/openssl | HTTPS capability |
-| PCRE2 | Download via https://github.com/PCRE2Project/pcre2/releases/ | regular expressions |
-| Zlib | Submodule via https://github.com/madler/zlib | standard compression |
-| Brotli | Submodule via https://github.com/google/ngx_brotli | improved compression |
-| Set misc | Submodule via https://github.com/openresty/set-misc-nginx-module | `set_xxx` directives |
-| Dev kit | Submodule via https://github.com/vision5/ngx_devel_kit | extend functionality |
+# Components
 
-**Target OS:** Ubuntu 20.04 and later. 18.04 and earlier is untested. No builds or instructions for containers or other distributions will be provided. I have no interest.
+| Name | Purpose |
+| --- | --- |
+| [NGINX QUIC](https://hg.nginx.org/nginx-quic) | This is the core of it all. Contains support for HTTP/3 and QUIC connections. |
+| [OpenSSL](https://github.com/quictls/openssl) | Alternatively called "quictls", this fork is based on the latest OpenSSL with QUIC implimentations. Requried for this build of NGINX. |
+| [PCRE2](https://github.com/PCRE2Project/pcre2/releases/) | Enables regular expression support for NGINX. |
+| [Zlib](https://github.com/madler/zlib) | Standard compression method. |
+| [Brotli](https://github.com/google/ngx_brotli) | An improved compression method over GZip (zlib). [All major browsers](https://caniuse.com/?search=Brotli) currently support Brotli. There is little need for GZip, however, the latest version is included for priority over system installed zlib package. |
+| [Dev kit](https://github.com/vision5/ngx_devel_kit) | Extends NGINX functionality. Required by Set Misc. |
+| [Set Misc](https://github.com/openresty/set-misc-nginx-module) | Enables the use of `set_xxx` directives. These are required for services like [Authelia](https://www.authelia.com/integration/proxies/nginx/). |
+
+# Use
+You can either use the prebuilt binary, or build yourself. Installer packages are currently not provided.
 
 ## Prebuilt
 1. Download the zip from releases.
 2. Place the zip at the root of your system.
 3. `unzip -o nginx.zip; systemctl daemon-reload; systemctl enable nginx; systemctl start nginx`
 
-Visit `http://localhost:80` or `http://127.0.0.1:80` to verify.
+Visit `http://localhost:80` or `http://127.0.0.1:80` to verify. Because there are no files present, you will be greeted by a `404` error page.
 
 ## Build yourself
 ### Prep
@@ -31,7 +37,7 @@ Visit `http://localhost:80` or `http://127.0.0.1:80` to verify.
 apt install git gcc cmake mercurial libpcre3 libpcre3-dev zlib1g zlib1g-dev libperl-dev libxslt1-dev libgd-ocaml-dev libgeoip-dev -y;
 ```
 ```bash
-git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb; git submodule update --init; cd ngx_brotli; git submodule update --init; cd ..; wget https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.42/pcre2-10.42.zip; unzip pcre2-10.42.zip; rm pcre2-10.42.zip; cd pcre2-10.42; chmod +x configure; ./configure; cd ../nginx*;
+git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb; git submodule update --init --recursive; cd pcre2-10.42; chmod +x configure; ./configure; cd ../nginx*;
 ```
 
 ### Configure
