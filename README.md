@@ -20,6 +20,7 @@ The target OS is Ubuntu 20.04 and later. 18.04 and earlier is untested. No build
 | [Brotli](https://github.com/google/ngx_brotli) | An improved compression method over GZip (zlib). [All major browsers](https://caniuse.com/?search=Brotli) currently support Brotli. There is little need for GZip, however, the latest version is included for priority over system installed zlib package. |
 | [Dev kit](https://github.com/vision5/ngx_devel_kit) | Extends NGINX functionality. Required by Set Misc. |
 | [Set Misc](https://github.com/openresty/set-misc-nginx-module) | Enables the use of `set_xxx` directives. These are required for services like [Authelia](https://www.authelia.com/integration/proxies/nginx/). |
+| [NGINX JS](https://hg.nginx.org/njs/) | Enables the use of [server-side JavaScript](https://www.nginx.com/blog/harnessing-power-convenience-of-javascript-for-each-request-with-nginx-javascript-module/). |
 
 # Use
 You can either use the prebuilt binary, or build yourself. Installer packages are currently not provided.
@@ -103,6 +104,9 @@ You may need to edit the configuration parameters to suit your needs. [A complet
 --with-openssl-opt=enable-ktls \
 --with-openssl-opt=enable-fips \
 --add-module=../ngx_brotli \
+--add-module=../njs/nginx \
+--add-module=../ngx_devel_kit \
+--add-module=../set-misc-nginx-module \
 --with-cc-opt='-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fPIC' \
 --with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -Wl,--as-needed -pie'
 ```

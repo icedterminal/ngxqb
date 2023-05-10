@@ -1,0 +1,50 @@
+# Copyright (C) Dmitry Volyntsev
+# Copyright (C) NGINX, Inc.
+
+njs_module_name=njs_buffer_module
+njs_module_incs=
+njs_module_srcs=src/njs_buffer.c
+
+. auto/module
+
+njs_module_name=njs_crypto_module
+njs_module_incs=
+njs_module_srcs=external/njs_crypto_module.c
+
+. auto/module
+
+if [ $NJS_OPENSSL = YES -a $NJS_HAVE_OPENSSL = YES ]; then
+	njs_module_name=njs_webcrypto_module
+	njs_module_incs=
+	njs_module_srcs=external/njs_webcrypto_module.c
+
+	. auto/module
+fi
+
+if [ $NJS_LIBXML2 = YES -a $NJS_HAVE_LIBXML2 = YES ]; then
+	njs_module_name=njs_xml_module
+	njs_module_incs=
+	njs_module_srcs=external/njs_xml_module.c
+
+	. auto/module
+fi
+
+if [ $NJS_ZLIB = YES -a $NJS_HAVE_ZLIB = YES ]; then
+	njs_module_name=njs_zlib_module
+	njs_module_incs=
+	njs_module_srcs=external/njs_zlib_module.c
+
+	. auto/module
+fi
+
+njs_module_name=njs_fs_module
+njs_module_incs=
+njs_module_srcs=external/njs_fs_module.c
+
+. auto/module
+
+njs_module_name=njs_query_string_module
+njs_module_incs=
+njs_module_srcs=external/njs_query_string_module.c
+
+. auto/module
