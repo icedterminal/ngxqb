@@ -50,7 +50,7 @@ Visit `http://localhost:80` or `http://127.0.0.1:80`. The default `nginx.conf` f
 apt install git gcc cmake mercurial libpcre3 libpcre3-dev zlib1g zlib1g-dev libperl-dev libxslt1-dev libgd-ocaml-dev libgeoip-dev -y;
 ```
 ```bash
-git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb; git submodule update --init --recursive; cd pcre2-10.42; chmod +x configure; ./configure; cd ../nginx*;
+git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb; git submodule update --init --recursive; cd ../nginx-quic;
 ```
 
 ### Configure
