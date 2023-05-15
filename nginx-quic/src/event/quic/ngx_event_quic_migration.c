@@ -16,6 +16,7 @@ static ngx_int_t ngx_quic_validate_path(ngx_connection_t *c,
     ngx_quic_path_t *path);
 static ngx_int_t ngx_quic_send_path_challenge(ngx_connection_t *c,
     ngx_quic_path_t *path);
+static void ngx_quic_set_path_timer(ngx_connection_t *c);
 static ngx_quic_path_t *ngx_quic_get_path(ngx_connection_t *c, ngx_uint_t tag);
 
 
@@ -168,6 +169,8 @@ valid:
     path->validated = 1;
     path->validating = 0;
     path->limited = 0;
+
+    ngx_quic_set_path_timer(c);
 
     return NGX_OK;
 }
@@ -384,16 +387,13 @@ ngx_quic_free_path(ngx_connection_t *c, ngx_quic_path_t *path)
 static void
 ngx_quic_set_connection_path(ngx_connection_t *c, ngx_quic_path_t *path)
 {
-    size_t  len;
-
     ngx_memcpy(c->sockaddr, path->sockaddr, path->socklen);
     c->socklen = path->socklen;
 
     if (c->addr_text.data) {
-        len = ngx_min(c->addr_text.len, path->addr_text.len);
-
-        ngx_memcpy(c->addr_text.data, path->addr_text.data, len);
-        c->addr_text.len = len;
+        c->addr_text.len = ngx_sock_ntop(c->sockaddr, c->socklen,
+                                         c->addr_text.data,
+                                         c->listening->addr_text_max_len, 0);
     }
 
     ngx_log_debug2(NGX_LOG_DEBUG_EVENT, c->log, 0,
@@ -496,6 +496,7 @@ ngx_quic_validate_path(ngx_connection_t *c, ngx_quic_path_t *path)
                    "quic initiated validation of path seq:%uL", path->seqnum);
 
     path->validating = 1;
+    path->tries = 0;
 
     if (RAND_bytes(path->challenge1, 8) != 1) {
         return NGX_ERROR;
@@ -510,14 +511,11 @@ ngx_quic_validate_path(ngx_connection_t *c, ngx_quic_path_t *path)
     }
 
     ctx = ngx_quic_get_send_ctx(qc, ssl_encryption_application);
-    pto = ngx_quic_pto(c, ctx);
+    pto = ngx_max(ngx_quic_pto(c, ctx), 1000);
 
     path->expires = ngx_current_msec + pto;
-    path->tries = NGX_QUIC_PATH_RETRIES;
 
-    if (!qc->path_validation.timer_set) {
-        ngx_add_timer(&qc->path_validation, pto);
-    }
+    ngx_quic_set_path_timer(c);
 
     return NGX_OK;
 }
@@ -563,6 +561,47 @@ ngx_quic_send_path_challenge(ngx_connection_t *c, ngx_quic_path_t *path)
 }
 
 
+static void
+ngx_quic_set_path_timer(ngx_connection_t *c)
+{
+    ngx_msec_t              now;
+    ngx_queue_t            *q;
+    ngx_msec_int_t          left, next;
+    ngx_quic_path_t        *path;
+    ngx_quic_connection_t  *qc;
+
+    qc = ngx_quic_get_connection(c);
+
+    now = ngx_current_msec;
+    next = -1;
+
+    for (q = ngx_queue_head(&qc->paths);
+         q != ngx_queue_sentinel(&qc->paths);
+         q = ngx_queue_next(q))
+    {
+        path = ngx_queue_data(q, ngx_quic_path_t, queue);
+
+        if (!path->validating) {
+            continue;
+        }
+
+        left = path->expires - now;
+        left = ngx_max(left, 1);
+
+        if (next == -1 || left < next) {
+            next = left;
+        }
+    }
+
+    if (next != -1) {
+        ngx_add_timer(&qc->path_validation, next);
+
+    } else if (qc->path_validation.timer_set) {
+        ngx_del_timer(&qc->path_validation);
+    }
+}
+
+
 void
 ngx_quic_path_validation_handler(ngx_event_t *ev)
 {
@@ -578,7 +617,6 @@ ngx_quic_path_validation_handler(ngx_event_t *ev)
     qc = ngx_quic_get_connection(c);
 
     ctx = ngx_quic_get_send_ctx(qc, ssl_encryption_application);
-    pto = ngx_quic_pto(c, ctx);
 
     next = -1;
     now = ngx_current_msec;
@@ -605,7 +643,9 @@ ngx_quic_path_validation_handler(ngx_event_t *ev)
             continue;
         }
 
-        if (--path->tries) {
+        if (++path->tries < NGX_QUIC_PATH_RETRIES) {
+            pto = ngx_max(ngx_quic_pto(c, ctx), 1000) << path->tries;
+
             path->expires = ngx_current_msec + pto;
 
             if (next == -1 || pto < next) {
