@@ -75,6 +75,7 @@ You may need to edit the configuration parameters to suit your needs. [A complet
 --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
 --user=www-data \
 --group=www-data \
+--with-debug \
 --with-compat \
 --with-file-aio \
 --with-threads \
