@@ -1,16 +1,19 @@
 name: C/C++ CI
 
-on:
+on:  
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    tags:
+      - '*'
+
+#on:
+  #push:
+    #branches: [ "main" ]
+  #pull_request:
+    #branches: [ "main" ]
 
 jobs:
   build:
-
     runs-on: self-hosted
-
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -23,4 +26,10 @@ jobs:
       working-directory: ./nginx-quic
       run: make -j4
     - name: Create archive
-      run: mkdir archive; cd archive; mkdir -p etc/nginx/{dh,modules,sites-available,sites-disabled,conf.d,html} var/cache/nginx/{client_temp,proxy_temp,fastcgi_temp,uwsgi_temp,scgi_temp} var/log/nginx var/www/html sbin lib/systemd/system; cp -r ../nginx-quic/conf/. etc/nginx/; cp -r ../nginx-quic/docs/html/. etc/nginx/html/; cp ../nginx-quic/objs/nginx sbin/nginx; cp ../nginx.service lib/systemd/system/nginx.service; zip -r nginx.zip *
+      run: mkdir archive; cd archive; mkdir -p etc/nginx/{dh,modules,sites-available,sites-disabled,conf.d,html} var/cache/nginx/{client_temp,proxy_temp,fastcgi_temp,uwsgi_temp,scgi_temp} var/log/nginx var/www/html sbin lib/systemd/system; cp -r ../nginx-quic/conf/. etc/nginx/; cp -r ../nginx-quic/docs/html/. etc/nginx/html/; cp ../nginx-quic/objs/nginx sbin/nginx; cp ../nginx.service lib/systemd/system/nginx.service; zip -r ngxqb.zip *; mv ngxqb.zip ../ngxqb.zip
+    - name: Release
+      uses: softprops/action-gh-release@v0.1.15
+      with:
+        fail_on_unmatched_files: true
+        files: ngxqb.zip
+        token: ${{ github.token }}
