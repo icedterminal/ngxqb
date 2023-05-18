@@ -31,7 +31,7 @@ You can either use the prebuilt binary, or build yourself. Installer packages ar
 2. Place the zip at the root of your system.
 3. Extract the contents
     ```
-    unzip -o nginx.zip
+    unzip -o ngxqb.zip
     ```
 4. Set the permissions
     ```
