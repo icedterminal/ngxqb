@@ -97,7 +97,6 @@ You may need to edit the configuration parameters to suit your needs. [A complet
 --with-stream_realip_module \
 --with-stream_ssl_module \
 --with-stream_ssl_preread_module \
---with-stream_quic_module \
 --with-zlib=../zlib \
 --with-pcre=../pcre2-10.42 \
 --with-openssl=../openssl \
@@ -137,7 +136,7 @@ nano /lib/systemd/system/nginx.service
 Paste the following contents in:
 ```
 [Unit]
-Description=NGINX-QUIC web server
+Description=NGINX web server
 Documentation=https://nginx.org/en/docs/
 After=network-online.target remote-fs.target nss-lookup.target
 Wants=network-online.target
