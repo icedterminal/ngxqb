@@ -3922,6 +3922,12 @@ static njs_unit_test_t  njs_test[] =
     { njs_str("var named = Symbol('xxx'); ({[named]: () => {}})[named].name"),
       njs_str("[xxx]") },
 
+    { njs_str("var obj = {}; ({[obj](){}}); typeof obj"),
+      njs_str("object") },
+
+    { njs_str("[function(){}][0].name"),
+      njs_str("") },
+
     { njs_str("var called = false;"
              "({"
              "   [{toString(){ if (called) throw 'OOps'; called = true; return 'a'}}](){}"
@@ -4554,6 +4560,38 @@ static njs_unit_test_t  njs_test[] =
 
     { njs_str("Array.isArray([]) ? 'true' : 'false'"),
       njs_str("true") },
+
+    { njs_str("["
+              "  [undefined],"
+              "  [null],"
+              "  ['foo'],"
+              "  ['foo', c => c.toUpperCase()],"
+              "  [{length: 3, 1:'a', 2:'b'}],"
+              "  [[7,,9], v => v*2],"
+              "].map(args => { try { return Array.from.apply(Array,args) }"
+              "                catch (e) {return e.toString()}})"),
+      njs_str("TypeError: cannot convert null or undefined to object,"
+              "TypeError: cannot convert null or undefined to object,"
+              "f,o,o,"
+              "F,O,O,"
+              ",a,b,"
+              "14,NaN,18"
+              ) },
+
+    { njs_str("function f() {return Array.from(arguments);}; f(1,2,3)"),
+      njs_str("1,2,3") },
+
+    { njs_str("Array.from({ length: 5 }, (v, i) => i)"),
+      njs_str("0,1,2,3,4") },
+
+    { njs_str("const range = (start, stop, step) =>"
+              "Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step);"
+              "range(1, 10, 2)"),
+      njs_str("1,3,5,7,9") },
+
+    { njs_str("var a = Array.from.call(Object, { length: 2, 0:7, 1:9 });"
+              "[a[0], a[1], Array.isArray(a)]"),
+      njs_str("7,9,false") },
 
     { njs_str("Array.of()"),
       njs_str("") },
@@ -11772,6 +11810,38 @@ static njs_unit_test_t  njs_test[] =
     { njs_str("var r = /./; r"),
       njs_str("/./") },
 
+    { njs_str("/[^]+|[^]+/.test('\\n| ')"),
+      njs_str("true") },
+
+    { njs_str("/[^]+|[^][^]/.test('|aa')"),
+      njs_str("true") },
+
+    { njs_str("/a[]/.test('a')"),
+      njs_str("false") },
+
+    { njs_str("/[]a/.test('a')"),
+      njs_str("false") },
+
+#ifdef NJS_HAVE_PCRE2
+    { njs_str("/[]*a/.test('a')"),
+      njs_str("true") },
+#endif
+
+    { njs_str("/Ca++BB/"),
+      njs_str("SyntaxError: Invalid regular expression \"Ca++BB\" nothing to repeat in 1") },
+
+    { njs_str("/a*+/"),
+      njs_str("SyntaxError: Invalid regular expression \"a*+\" nothing to repeat in 1") },
+
+    { njs_str("/a?+/"),
+      njs_str("SyntaxError: Invalid regular expression \"a?+\" nothing to repeat in 1") },
+
+    { njs_str(" /\\[[]++\\]/"),
+      njs_str("SyntaxError: Invalid regular expression \"\\[[]++\\]\" nothing to repeat in 1") },
+
+    { njs_str("/\\?+/"),
+      njs_str("/\\?+/") },
+
     { njs_str("var r = new RegExp(); r"),
       njs_str("/(?:)/") },
 
@@ -11831,6 +11901,15 @@ static njs_unit_test_t  njs_test[] =
 
     { njs_str("RegExp(new RegExp('expr'))"),
       njs_str("/expr/") },
+
+    { njs_str("RegExp(RegExp('[^]+|[^][^]')).test('| \\na')"),
+      njs_str("true") },
+
+    { njs_str("RegExp('a++')"),
+      njs_str("SyntaxError: Invalid regular expression \"a++\" nothing to repeat") },
+
+    { njs_str("RegExp('[a++]')"),
+      njs_str("/[a++]/") },
 
     { njs_str("RegExp(new RegExp('expr')).multiline"),
       njs_str("false") },
@@ -15276,7 +15355,7 @@ static njs_unit_test_t  njs_test[] =
       njs_str("length,name,prototype") },
 
     { njs_str("Object.getOwnPropertyNames(Array)"),
-      njs_str("name,length,prototype,isArray,of") },
+      njs_str("name,length,prototype,from,isArray,of") },
 
     { njs_str("Object.getOwnPropertyNames(Array.isArray)"),
       njs_str("name,length") },

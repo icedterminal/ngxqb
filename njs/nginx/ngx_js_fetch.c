@@ -658,6 +658,7 @@ ngx_js_ext_fetch(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     njs_int_t            ret;
     ngx_url_t            u;
     ngx_uint_t           i;
+    njs_bool_t           has_host;
     ngx_pool_t          *pool;
     njs_value_t         *init, *value;
     ngx_js_http_t       *http;
@@ -746,10 +747,42 @@ ngx_js_ext_fetch(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     njs_chb_append(&http->chain, u.uri.data, u.uri.len);
     njs_chb_append_literal(&http->chain, " HTTP/1.1" CRLF);
 
-    njs_chb_append_literal(&http->chain, "Host: ");
-    njs_chb_append(&http->chain, u.host.data, u.host.len);
-    njs_chb_append_literal(&http->chain, CRLF);
-    njs_chb_append_literal(&http->chain, "Connection: close" CRLF);
+    has_host = 0;
+    part = &request.headers.header_list.part;
+    h = part->elts;
+
+    for (i = 0; /* void */; i++) {
+
+        if (i >= part->nelts) {
+            if (part->next == NULL) {
+                break;
+            }
+
+            part = part->next;
+            h = part->elts;
+            i = 0;
+        }
+
+        if (h[i].hash == 0) {
+            continue;
+        }
+
+        if (h[i].key.len == 4
+            && ngx_strncasecmp(h[i].key.data, (u_char *) "Host", 4) == 0)
+        {
+            has_host = 1;
+            njs_chb_append_literal(&http->chain, "Host: ");
+            njs_chb_append(&http->chain, h[i].value.data, h[i].value.len);
+            njs_chb_append_literal(&http->chain, CRLF);
+            break;
+        }
+    }
+
+    if (!has_host) {
+        njs_chb_append_literal(&http->chain, "Host: ");
+        njs_chb_append(&http->chain, u.host.data, u.host.len);
+        njs_chb_append_literal(&http->chain, CRLF);
+    }
 
     part = &request.headers.header_list.part;
     h = part->elts;
@@ -770,11 +803,19 @@ ngx_js_ext_fetch(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
             continue;
         }
 
+        if (h[i].key.len == 4
+            && ngx_strncasecmp(h[i].key.data, (u_char *) "Host", 4) == 0)
+        {
+            continue;
+        }
+
         njs_chb_append(&http->chain, h[i].key.data, h[i].key.len);
         njs_chb_append_literal(&http->chain, ": ");
         njs_chb_append(&http->chain, h[i].value.data, h[i].value.len);
         njs_chb_append_literal(&http->chain, CRLF);
     }
+
+    njs_chb_append_literal(&http->chain, "Connection: close" CRLF);
 
 #if (NGX_SSL)
     http->tls_name.data = u.host.data;
@@ -2184,43 +2225,6 @@ ngx_js_headers_append(njs_vm_t *vm, ngx_js_headers_t *headers,
     ngx_uint_t        i;
     ngx_js_tb_elt_t  *h, **ph;
     ngx_list_part_t  *part;
-    const njs_str_t  *f;
-
-    static const njs_str_t forbidded_request[] = {
-        njs_str("Accept-Charset"),
-        njs_str("Accept-Encoding"),
-        njs_str("Access-Control-Request-Headers"),
-        njs_str("Access-Control-Request-Method"),
-        njs_str("Connection"),
-        njs_str("Content-Length"),
-        njs_str("Cookie"),
-        njs_str("Date"),
-        njs_str("DNT"),
-        njs_str("Expect"),
-        njs_str("Host"),
-        njs_str("Keep-Alive"),
-        njs_str("Origin"),
-        njs_str("Referer"),
-        njs_str("Set-Cookie"),
-        njs_str("TE"),
-        njs_str("Trailer"),
-        njs_str("Transfer-Encoding"),
-        njs_str("Upgrade"),
-        njs_str("Via"),
-        njs_null_str,
-    };
-
-    static const njs_str_t forbidded_response[] = {
-        njs_str("Set-Cookie"),
-        njs_str("Set-Cookie2"),
-        njs_null_str,
-    };
-
-    static const njs_str_t forbidded_request_prefix[] = {
-        njs_str("proxy-"),
-        njs_str("sec-"),
-        njs_null_str,
-    };
 
     ngx_js_http_trim(&value, &vlen, 0);
 
@@ -2251,34 +2255,6 @@ ngx_js_headers_append(njs_vm_t *vm, ngx_js_headers_t *headers,
     if (headers->guard == GUARD_IMMUTABLE) {
         njs_vm_error(vm, "cannot append to immutable object");
         return NJS_ERROR;
-    }
-
-    if (headers->guard == GUARD_REQUEST) {
-        for (f = &forbidded_request[0]; f->length != 0; f++) {
-            if (len == f->length
-                && (njs_strncasecmp(name, f->start, len) == 0))
-            {
-                return NJS_OK;
-            }
-        }
-
-        for (f = &forbidded_request_prefix[0]; f->length != 0; f++) {
-            if (len >= f->length
-                && (njs_strncasecmp(name, f->start, f->length) == 0))
-            {
-                return NJS_OK;
-            }
-        }
-    }
-
-    if (headers->guard == GUARD_RESPONSE) {
-        for (f = &forbidded_response[0]; f->length != 0; f++) {
-            if (len == f->length
-                && (njs_strncasecmp(name, f->start, len) == 0))
-            {
-                return NJS_OK;
-            }
-        }
     }
 
     ph = NULL;

@@ -3235,9 +3235,12 @@ njs_generate_assignment_end(njs_vm_t *vm, njs_generator_t *generator,
     switch (lvalue->token_type) {
     case NJS_TOKEN_PROPERTY_INIT:
 
-        if ((expr->token_type == NJS_TOKEN_FUNCTION
-             || expr->token_type == NJS_TOKEN_FUNCTION_EXPRESSION
-             || expr->token_type == NJS_TOKEN_ASYNC_FUNCTION_EXPRESSION))
+        if ((object->token_type == NJS_TOKEN_OBJECT
+             || (object->token_type == NJS_TOKEN_OBJECT_VALUE
+                 && object->u.object->token_type == NJS_TOKEN_OBJECT))
+            && (expr->token_type == NJS_TOKEN_FUNCTION
+                || expr->token_type == NJS_TOKEN_FUNCTION_EXPRESSION
+                || expr->token_type == NJS_TOKEN_ASYNC_FUNCTION_EXPRESSION))
         {
             if (property->token_type == NJS_TOKEN_STRING) {
                 njs_value_assign(&expr->u.value.data.u.lambda->name,
@@ -3246,6 +3249,12 @@ njs_generate_assignment_end(njs_vm_t *vm, njs_generator_t *generator,
             } else {
                 njs_generate_code(generator, njs_vmcode_2addr_t, to_prop_key,
                                   NJS_VMCODE_TO_PROPERTY_KEY, 2, property);
+
+                prop_index = njs_generate_temp_index_get(vm, generator,
+                                                         property);
+                if (njs_slow_path(prop_index == NJS_INDEX_ERROR)) {
+                    return NJS_ERROR;
+                }
 
                 to_prop_key->src = property->index;
                 to_prop_key->dst = prop_index;
@@ -3276,6 +3285,13 @@ njs_generate_assignment_end(njs_vm_t *vm, njs_generator_t *generator,
     prop_set->value = expr->index;
     prop_set->object = object->index;
     prop_set->property = prop_index;
+
+    if (prop_index != property->index) {
+        ret = njs_generate_index_release(vm, generator, prop_index);
+        if (njs_slow_path(ret != NJS_OK)) {
+            return ret;
+        }
+    }
 
     node->index = expr->index;
     node->temporary = expr->temporary;
