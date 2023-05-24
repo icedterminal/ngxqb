@@ -14,7 +14,7 @@ The target OS is Ubuntu 20.04 and later. 18.04 and earlier is untested. No build
 
 | Name | Purpose |
 | --- | --- |
-| [NGINX QUIC](https://hg.nginx.org/nginx-quic) | This is the core of it all. Contains support for HTTP/3 and QUIC connections. |
+| [NGINX](https://hg.nginx.org/nginx) | This is the core of it all. Contains support for HTTP/3 and QUIC connections. |
 | [OpenSSL](https://github.com/quictls/openssl) | Alternatively called "quictls", this fork is based on the latest OpenSSL with QUIC implimentations. Requried for this build of NGINX. |
 | [PCRE2](https://github.com/PCRE2Project/pcre2/releases/) | Enables regular expression support for NGINX. |
 | [Zlib](https://github.com/madler/zlib) | Standard compression method. |
@@ -50,7 +50,7 @@ Visit `http://localhost:80` or `http://127.0.0.1:80`. The default `nginx.conf` f
 apt install git gcc cmake mercurial libpcre3 libpcre3-dev zlib1g zlib1g-dev libperl-dev libxslt1-dev libgd-ocaml-dev libgeoip-dev -y;
 ```
 ```bash
-git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb; git submodule update --init --recursive; cd ../nginx-quic;
+git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb; git submodule update --init --recursive; cd ../nginx;
 ```
 
 ### Configure
@@ -58,8 +58,6 @@ You may need to edit the configuration parameters to suit your needs. [A complet
 
 ```bash
 ./auto/configure \
-`nginx -V 2>&1 | sed "s/ \-\-/ \\\ \n\t--/g" | grep "\-\-" | grep -ve opt= -e param= -e build=` \
---build=nginx-quic \
 --prefix=/etc/nginx \
 --sbin-path=/usr/sbin/nginx \
 --conf-path=/etc/nginx/nginx.conf \

@@ -1,5 +1,5 @@
 [Unit]
-Description=NGINX-QUIC web server
+Description=NGINX web server
 Documentation=https://nginx.org/en/docs/
 After=network-online.target remote-fs.target nss-lookup.target
 Wants=network-online.target
