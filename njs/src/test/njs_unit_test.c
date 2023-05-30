@@ -2963,6 +2963,12 @@ static njs_unit_test_t  njs_test[] =
     { njs_str("for(A?{,"),
       njs_str("SyntaxError: Unexpected token \",\" in 1") },
 
+    { njs_str("for(Symbol(A=>A+       in 'A') P/$"),
+      njs_str("SyntaxError: Unexpected token \"in\" in 1") },
+
+    { njs_str("for (a(b * in d) ;"),
+      njs_str("SyntaxError: Unexpected token \"in\" in 1") },
+
     /* switch. */
 
     { njs_str("switch"),
@@ -5159,6 +5165,9 @@ static njs_unit_test_t  njs_test[] =
               "a.splice(0)"),
       njs_str(",,") },
 
+    { njs_str("'/A/B/C/D/'.split('/').toSpliced(1,1).join('/')"),
+      njs_str("/B/C/D/") },
+
     { njs_str("var a = []; a.reverse()"),
       njs_str("") },
 
@@ -5214,6 +5223,9 @@ static njs_unit_test_t  njs_test[] =
 
     { njs_str("Array.prototype[0] = 0; var x = [,1]; x.reverse(); x"),
       njs_str("1,0") },
+
+    { njs_str("var a = [,3,2,1]; njs.dump([a.toReversed(),a])"),
+      njs_str("[[1,2,3,undefined],[<empty>,3,2,1]]") },
 
     { njs_str("var a = [1,2,3,4]; a.indexOf()"),
       njs_str("-1") },
@@ -6696,6 +6708,11 @@ static njs_unit_test_t  njs_test[] =
               ".every(v=>{ return (new v([1,2,3,4])).reverse().join('|') == '4|3|2|1'})"),
       njs_str("true") },
 
+    { njs_str(NJS_TYPED_ARRAY_LIST
+              ".every(v=>{var a = new v([3,2,1]);"
+              "           return [a.toReversed(), a].toString() === '1,2,3,3,2,1'})"),
+      njs_str("true") },
+
     { njs_str("Uint8Array.prototype.sort.call(1)"),
       njs_str("TypeError: this is not a typed array") },
 
@@ -6738,6 +6755,17 @@ static njs_unit_test_t  njs_test[] =
 
     { njs_str("(new Float64Array([255,255,NaN,3,NaN,Infinity,3,-Infinity,0,-0,2,1,-5])).slice(2).sort()"),
       njs_str("-Infinity,-5,0,0,1,2,3,3,Infinity,NaN,NaN") },
+
+    { njs_str(NJS_TYPED_ARRAY_LIST
+              ".every(v=>{var a = new v([3,2,1]);"
+              "           return [a.toSorted(),a].toString() === '1,2,3,3,2,1'})"),
+      njs_str("true") },
+
+    { njs_str(NJS_TYPED_ARRAY_LIST
+              ".every(v=>{var a = (new v([3,2,1]));"
+              "           a.constructor = (v == Uint8Array) ? Uint32Array : Uint8Array;"
+              "           return Object.getPrototypeOf(a.toSorted()) === v.prototype})"),
+      njs_str("true") },
 
     { njs_str("(new DataView(new ArrayBuffer(3)))"),
       njs_str("[object DataView]") },
@@ -7331,6 +7359,36 @@ static njs_unit_test_t  njs_test[] =
               "shift = false;"
               "[a.length, a[0].toString(), a[63].toString()]"),
       njs_str("64,00,63") },
+
+    { njs_str("Object.prototype[2] = 4;"
+              "njs.dump([undefined, 3, /*hole*/, 2, undefined, /*hole*/, 1].sort())"),
+      njs_str("[1,2,3,4,undefined,undefined,<empty>]") },
+
+    { njs_str("var a = [3,2,1]; [a.toSorted(), a]"),
+      njs_str("1,2,3,3,2,1") },
+
+    { njs_str("var a = [3,,1]; njs.dump([a.toSorted(), a.sort()])"),
+      njs_str("[[1,3,undefined],[1,3,<empty>]]") },
+
+    { njs_str("var a = {length:3, 0:'Z', 2:'A'};"
+              "njs.dump([Array.prototype.toSorted.call(a), Array.prototype.sort.call(a)])"),
+      njs_str("[['A','Z',undefined],{length:3,0:'A',1:'Z'}]") },
+
+    { njs_str("var a = {length: 1}; a.__proto__ = {0:'A'};"
+              "njs.dump([Array.prototype.toSorted.call(a), Array.prototype.sort.call(a)])"),
+      njs_str("[['A'],{length:1}]") },
+
+    { njs_str("Array.prototype.toSorted.call(true)"),
+      njs_str("") },
+
+    { njs_str("Array.prototype.toSorted.call({length: -2})"),
+      njs_str("") },
+
+    { njs_str("Array.prototype.toSorted.call({length: NaN})"),
+      njs_str("") },
+
+    { njs_str("Array.prototype.toSorted.call({length: 2**32})"),
+      njs_str("RangeError: Invalid array length") },
 
     /*
       Array.prototype.keys()
@@ -18845,11 +18903,17 @@ static njs_unit_test_t  njs_test[] =
 
     /* Module. */
 
-    { njs_str("import;"),
+    { njs_str("import * from y"),
+      njs_str("SyntaxError: Non-default import is not supported in 1") },
+
+    { njs_str("import 'x' from y"),
       njs_str("SyntaxError: Non-default import is not supported in 1") },
 
     { njs_str("import {x} from y"),
       njs_str("SyntaxError: Non-default import is not supported in 1") },
+
+    { njs_str("import switch from y"),
+      njs_str("SyntaxError: Unexpected token \"switch\" in 1") },
 
     { njs_str("import x from y"),
       njs_str("SyntaxError: Unexpected token \"y\" in 1") },

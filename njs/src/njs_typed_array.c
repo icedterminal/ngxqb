@@ -1609,15 +1609,15 @@ njs_typed_array_prototype_reduce(njs_vm_t *vm, njs_value_t *args,
 
 static njs_int_t
 njs_typed_array_prototype_reverse(njs_vm_t *vm, njs_value_t *args,
-    njs_uint_t nargs, njs_index_t unused, njs_value_t *retval)
+    njs_uint_t nargs, njs_index_t to_reversed, njs_value_t *retval)
 {
     double              *f64;
     uint8_t             *u8;
     int64_t             i, length;
     uint16_t            *u16;
     uint32_t            *u32;
-    njs_value_t         *this;
-    njs_typed_array_t   *array;
+    njs_value_t         *this, arguments[1];
+    njs_typed_array_t   *array, *self;
     njs_array_buffer_t  *buffer;
 
     this = njs_argument(args, 0);
@@ -1627,8 +1627,24 @@ njs_typed_array_prototype_reverse(njs_vm_t *vm, njs_value_t *args,
     }
 
     array = njs_typed_array(this);
-    length = njs_typed_array_length(array);
+    if (njs_slow_path(njs_is_detached_buffer(array->buffer))) {
+        njs_type_error(vm, "detached buffer");
+        return NJS_ERROR;
+    }
 
+    if (to_reversed) {
+        self = array;
+        njs_set_number(&arguments[0], njs_typed_array_length(self));
+        array = njs_typed_array_alloc(vm, arguments, 1, 0, self->type);
+        if (njs_slow_path(array == NULL)) {
+            return NJS_ERROR;
+        }
+
+        memcpy(&array->buffer->u.u8[0], &self->buffer->u.u8[0],
+               self->byte_length);
+    }
+
+    length = njs_typed_array_length(array);
     buffer = njs_typed_array_writable(vm, array);
     if (njs_slow_path(buffer == NULL)) {
         return NJS_ERROR;
@@ -1897,13 +1913,13 @@ exception:
 
 static njs_int_t
 njs_typed_array_prototype_sort(njs_vm_t *vm, njs_value_t *args,
-    njs_uint_t nargs, njs_index_t unused, njs_value_t *retval)
+    njs_uint_t nargs, njs_index_t to_sorted, njs_value_t *retval)
 {
     u_char                      *base, *orig;
     int64_t                     length;
     uint32_t                    element_size;
-    njs_value_t                 *this, *comparefn;
-    njs_typed_array_t           *array;
+    njs_value_t                 *this, *comparefn, arguments[1];
+    njs_typed_array_t           *array, *self;
     njs_array_buffer_t          *buffer;
     njs_typed_array_cmp_t       cmp;
     njs_typed_array_sort_ctx_t  ctx;
@@ -1918,6 +1934,18 @@ njs_typed_array_prototype_sort(njs_vm_t *vm, njs_value_t *args,
     if (njs_slow_path(njs_is_detached_buffer(array->buffer))) {
         njs_type_error(vm, "detached buffer");
         return NJS_ERROR;
+    }
+
+    if (to_sorted) {
+        self = array;
+        njs_set_number(&arguments[0], njs_typed_array_length(self));
+        array = njs_typed_array_alloc(vm, arguments, 1, 0, self->type);
+        if (njs_slow_path(array == NULL)) {
+            return NJS_ERROR;
+        }
+
+        memcpy(&array->buffer->u.u8[0], &self->buffer->u.u8[0],
+               self->byte_length);
     }
 
     ctx.vm = vm;
@@ -2283,6 +2311,11 @@ static const njs_object_prop_t  njs_typed_array_prototype_properties[] =
     NJS_DECLARE_PROP_NATIVE("sort", njs_typed_array_prototype_sort, 1, 0),
 
     NJS_DECLARE_PROP_NATIVE("subarray", njs_typed_array_prototype_slice, 2, 0),
+
+    NJS_DECLARE_PROP_NATIVE("toReversed", njs_typed_array_prototype_reverse, 0,
+                            1),
+
+    NJS_DECLARE_PROP_NATIVE("toSorted", njs_typed_array_prototype_sort, 1, 1),
 
     NJS_DECLARE_PROP_NATIVE("toString", njs_array_prototype_to_string, 0, 0),
 
