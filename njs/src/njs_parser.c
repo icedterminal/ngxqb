@@ -5496,6 +5496,10 @@ njs_parser_for_expression_map_reparse(njs_parser_t *parser,
 {
     njs_str_t  *text;
 
+    if (parser->ret != NJS_OK && parser->node != NULL) {
+        return njs_parser_failed(parser);
+    }
+
     if (parser->node == NULL) {
         njs_lexer_in_fail_set(parser->lexer, 1);
 
@@ -5904,12 +5908,10 @@ njs_parser_for_var_binding_or_var_list(njs_parser_t *parser,
             njs_lexer_consume_token(parser->lexer, 2);
 
             return NJS_DONE;
+
+        } else {
+            return njs_parser_failed(parser);
         }
-
-        parser->node = NULL;
-
-        njs_parser_next(parser, njs_parser_expression);
-        return NJS_OK;
     }
 }
 
