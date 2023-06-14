@@ -60,6 +60,7 @@ html {
 
   pre {
     margin-bottom: 0;
+    font-family: $font-family-fixed;
     font-size: $code-font-size;
     line-height: 1.4rem;
     word-wrap: normal; /* Fixed Safari overflow-x */
@@ -89,6 +90,7 @@ code {
   -webkit-hyphens: none;
   -ms-hyphens: none;
   hyphens: none;
+  font-family: $font-family-fixed;
 
   &.highlighter-rouge {
     font-size: $code-font-size;
