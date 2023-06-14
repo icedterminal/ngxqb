@@ -80,7 +80,7 @@ theme_mode: # [light|dark]
 img_cdn:
 
 # the avatar on sidebar, support local or CORS resources
-avatar:
+avatar: /assets/img/favicons/android-chrome-512x512.png
 
 # boolean type, the global switch for TOC in posts.
 toc: true
@@ -108,10 +108,10 @@ comments:
 # Self-hosted static assets, optional › https://github.com/cotes2020/chirpy-static-assets
 assets:
   self_host:
-    enabled: true
+    enabled: false
     # specify the Jekyll environment, empty means both
     # only works if `assets.self_host.enabled` is 'true'
-    env: production
+    env: #production
 
 pwa:
   enabled: true # the option for PWA feature
