@@ -1,0 +1,17 @@
+---
+title: Components
+date: 2023-06-14 11:43:00
+pin: true
+---
+
+| Name | Purpose |
+| --- | --- |
+| [NGINX](https://hg.nginx.org/nginx) | This is the core of it all. Contains support for HTTP/3 and QUIC connections. |
+| [OpenSSL](https://github.com/quictls/openssl) | Alternatively called "quictls", this fork is based on the latest OpenSSL with QUIC implimentations. Requried for this build of NGINX. |
+| [PCRE2](https://github.com/PCRE2Project/pcre2/releases/) | Enables regular expression support for NGINX. |
+| [Zlib](https://github.com/madler/zlib) | Standard compression method. |
+| [Brotli](https://github.com/google/ngx_brotli) | An improved compression method over GZip (zlib). [All major browsers](https://caniuse.com/?search=Brotli) currently support Brotli. There is little need for GZip, however, the latest version is included for priority over system installed zlib package. |
+| [Dev kit](https://github.com/vision5/ngx_devel_kit) | Extends NGINX functionality. Required by Set Misc. |
+| [Set Misc](https://github.com/openresty/set-misc-nginx-module) | Enables the use of `set_xxx` directives. These are required for services like [Authelia](https://www.authelia.com/integration/proxies/nginx/). |
+| [NGINX JS](https://hg.nginx.org/njs/) | Enables the use of [server-side JavaScript](https://www.nginx.com/blog/harnessing-power-convenience-of-javascript-for-each-request-with-nginx-javascript-module/). |
+

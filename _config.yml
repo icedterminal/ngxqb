@@ -23,7 +23,7 @@ title: NGXQB # the main title
 tagline: Custom built NGINX sever. # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
-  Custom built NGINX sever.
+  A custom build of NGINX server for the modern web with OpenSSL 3+ (HTTP/3 + QUIC), Brotli and additional components compiled into one.
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
 url: "https://www.icedterminal.me/ngxqb"
@@ -31,18 +31,18 @@ url: "https://www.icedterminal.me/ngxqb"
 github:
   username: icedterminal # change to your github username
 
-twitter:
-  username: twitter_username # change to your twitter username
+#twitter:
+#  username: twitter_username # change to your twitter username
 
 social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
   name: icedterminal
-  email: example@domain.com # change to your email address
+  email: icedterminal@gmail.com # change to your email address
   links:
     # The first element serves as the copyright owner's link
-    - https://twitter.com/username # change to your twitter homepage
-    - https://github.com/icedterminal # change to your github homepage
+    #- https://twitter.com/username # change to your twitter homepage
+    - https://github.com/icedterminal/ngxqb # change to your github homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
     # - https://www.linkedin.com/in/username
