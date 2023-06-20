@@ -850,4 +850,3 @@ data/test/fs/promises_05.t.js.i
 data/test/js/import_multi_default.t.js.i
 data/nxt/auto/explicit_bzero.i
 data/njs/njs_regexp.c.i
-data/ts/njs_webapi.d.ts.i
