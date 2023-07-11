@@ -72,12 +72,23 @@ extern const njs_value_t            njs_value_undefined;
     ((n < nargs) ? njs_argument(args, n)                                      \
                  : (njs_value_assign(lvalue, &njs_value_undefined), lvalue))
 
-#define njs_vm_log(vm, fmt, ...)  njs_vm_logger(vm, NJS_LOG_LEVEL_INFO, fmt,  \
-                                                ##__VA_ARGS__)
-#define njs_vm_warn(vm, fmt, ...)  njs_vm_logger(vm, NJS_LOG_LEVEL_WARN, fmt, \
-                                                ##__VA_ARGS__)
-#define njs_vm_err(vm, fmt, ...)  njs_vm_logger(vm, NJS_LOG_LEVEL_ERROR, fmt, \
-                                                ##__VA_ARGS__)
+#define njs_vm_log(vm, fmt, ...)                                              \
+    njs_vm_logger(vm, NJS_LOG_LEVEL_INFO, fmt, ##__VA_ARGS__)
+#define njs_vm_warn(vm, fmt, ...)                                             \
+    njs_vm_logger(vm, NJS_LOG_LEVEL_WARN, fmt, ##__VA_ARGS__)
+#define njs_vm_err(vm, fmt, ...)                                              \
+    njs_vm_logger(vm, NJS_LOG_LEVEL_ERROR, fmt, ##__VA_ARGS__)
+
+#define njs_vm_error(vm, fmt, ...)                                            \
+    njs_vm_error2(vm, 0, fmt, ##__VA_ARGS__)
+#define njs_vm_internal_error(vm, fmt, ...)                                   \
+    njs_vm_error2(vm, 2, fmt, ##__VA_ARGS__)
+#define njs_vm_range_error(vm, fmt, ...)                                      \
+    njs_vm_error2(vm, 3, fmt, ##__VA_ARGS__)
+#define njs_vm_syntax_error(vm, fmt, ...)                                     \
+    njs_vm_error2(vm, 5, fmt, ##__VA_ARGS__)
+#define njs_vm_type_error(vm, fmt, ...)                                       \
+    njs_vm_error2(vm, 6, fmt, ##__VA_ARGS__)
 
 #define njs_deprecated(vm, text)                                             \
     do {                                                                     \
@@ -246,6 +257,7 @@ typedef njs_int_t (*njs_addon_init_pt)(njs_vm_t *vm);
 
 typedef struct {
     njs_str_t                       name;
+    njs_addon_init_pt               preinit;
     njs_addon_init_pt               init;
 } njs_module_t;
 
@@ -392,6 +404,10 @@ NJS_EXPORT njs_int_t njs_vm_add_path(njs_vm_t *vm, const njs_str_t *path);
 
 NJS_EXPORT njs_int_t njs_vm_external_prototype(njs_vm_t *vm,
     const njs_external_t *definition, njs_uint_t n);
+NJS_EXPORT njs_int_t njs_vm_external_constructor(njs_vm_t *vm,
+    const njs_str_t *name, njs_function_native_t native,
+    const njs_external_t *ctor_props, njs_uint_t ctor_nprops,
+    const njs_external_t *proto_props, njs_uint_t proto_nprops);
 NJS_EXPORT njs_int_t njs_vm_external_create(njs_vm_t *vm, njs_value_t *value,
     njs_int_t proto_id, njs_external_ptr_t external, njs_bool_t shared);
 NJS_EXPORT njs_external_ptr_t njs_vm_external(njs_vm_t *vm,
@@ -406,6 +422,15 @@ NJS_EXPORT njs_int_t njs_value_property_set(njs_vm_t *vm, njs_value_t *value,
 NJS_EXPORT uintptr_t njs_vm_meta(njs_vm_t *vm, njs_uint_t index);
 NJS_EXPORT njs_vm_opt_t *njs_vm_options(njs_vm_t *vm);
 
+NJS_EXPORT njs_int_t njs_error_constructor(njs_vm_t *vm, njs_value_t *args,
+    njs_uint_t nargs, njs_index_t type, njs_value_t *retval);
+NJS_EXPORT njs_int_t njs_object_prototype_create_constructor(njs_vm_t *vm,
+    njs_object_prop_t *prop, njs_value_t *value, njs_value_t *setval,
+    njs_value_t *retval);
+NJS_EXPORT njs_int_t njs_object_prototype_create(njs_vm_t *vm,
+    njs_object_prop_t *prop, njs_value_t *value, njs_value_t *setval,
+    njs_value_t *retval);
+
 NJS_EXPORT njs_function_t *njs_vm_function_alloc(njs_vm_t *vm,
     njs_function_native_t native, njs_bool_t shared, njs_bool_t ctor);
 
@@ -413,13 +438,19 @@ NJS_EXPORT void njs_disassembler(njs_vm_t *vm);
 
 NJS_EXPORT njs_int_t njs_vm_bind(njs_vm_t *vm, const njs_str_t *var_name,
     const njs_value_t *value, njs_bool_t shared);
+njs_int_t njs_vm_bind_handler(njs_vm_t *vm, const njs_str_t *var_name,
+    njs_prop_handler_t handler, uint16_t magic16, uint32_t magic32,
+    njs_bool_t shared);
 NJS_EXPORT njs_int_t njs_vm_value(njs_vm_t *vm, const njs_str_t *path,
     njs_value_t *retval);
 NJS_EXPORT njs_function_t *njs_vm_function(njs_vm_t *vm, const njs_str_t *name);
 NJS_EXPORT njs_bool_t njs_vm_constructor(njs_vm_t *vm);
 
 NJS_EXPORT void njs_vm_throw(njs_vm_t *vm, const njs_value_t *value);
-NJS_EXPORT void njs_vm_error(njs_vm_t *vm, const char *fmt, ...);
+NJS_EXPORT void njs_vm_error2(njs_vm_t *vm, unsigned error_type,
+    const char *fmt, ...);
+NJS_EXPORT void njs_vm_error3(njs_vm_t *vm, unsigned type, const char *fmt,
+    ...);
 NJS_EXPORT void njs_vm_exception_get(njs_vm_t *vm, njs_value_t *retval);
 NJS_EXPORT njs_mp_t *njs_vm_memory_pool(njs_vm_t *vm);
 NJS_EXPORT njs_external_ptr_t njs_vm_external_ptr(njs_vm_t *vm);

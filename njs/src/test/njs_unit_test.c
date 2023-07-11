@@ -2975,6 +2975,9 @@ static njs_unit_test_t  njs_test[] =
     { njs_str("for(var``>0; 0 ;) ;"),
       njs_str("SyntaxError: Unexpected token \"`\" in 1") },
 
+    { njs_str("for(i;;)for(-new+3;;)break;"),
+      njs_str("SyntaxError: Unexpected token \"+\" in 1") },
+
     /* switch. */
 
     { njs_str("switch"),
@@ -20043,32 +20046,32 @@ static njs_unit_test_t  njs_fs_module_test[] =
 
     { njs_str("var fs = require('fs');"
               "fs.readFile()"),
-      njs_str("Error: \"path\" must be a string or Buffer") },
+      njs_str("TypeError: \"path\" must be a string or Buffer") },
 
     { njs_str("var fs = require('fs');"
               "var path = Buffer.from('/broken'); path[3] = 0;"
               "fs.readFile(path)"),
-      njs_str("Error: \"path\" must be a Buffer without null bytes") },
+      njs_str("TypeError: \"path\" must be a Buffer without null bytes") },
 
     { njs_str("var fs = require('fs');"
               "fs.readFile('/njs_unknown_path')"),
-      njs_str("Error: \"callback\" must be a function") },
+      njs_str("TypeError: \"callback\" must be a function") },
 
     { njs_str("var fs = require('fs');"
               "fs.readFile('/njs_unknown_path', 'utf8')"),
-      njs_str("Error: \"callback\" must be a function") },
+      njs_str("TypeError: \"callback\" must be a function") },
 
     { njs_str("var fs = require('fs');"
               "fs.readFile('/njs_unknown_path', {flag:'xx'})"),
-      njs_str("Error: \"callback\" must be a function") },
+      njs_str("TypeError: \"callback\" must be a function") },
 
     { njs_str("var fs = require('fs');"
               "fs.readFile('/njs_unknown_path', {flag:'xx'}, 1)"),
-      njs_str("Error: \"callback\" must be a function") },
+      njs_str("TypeError: \"callback\" must be a function") },
 
     { njs_str("var fs = require('fs');"
               "fs.readFile('/njs_unknown_path', {flag:'xx'}, function () {})"),
-      njs_str("Error: Unknown file open flags: \"xx\"") },
+      njs_str("TypeError: Unknown file open flags: \"xx\"") },
 
     { njs_str("var fs = require('fs');"
               "fs.readFile('/njs_unknown_path', {encoding:'ascii'}, function () {})"),
@@ -20082,15 +20085,15 @@ static njs_unit_test_t  njs_fs_module_test[] =
 
     { njs_str("var fs = require('fs');"
               "fs.readFileSync()"),
-      njs_str("Error: \"path\" must be a string or Buffer") },
+      njs_str("TypeError: \"path\" must be a string or Buffer") },
 
     { njs_str("var fs = require('fs');"
               "fs.readFileSync({})"),
-      njs_str("Error: \"path\" must be a string or Buffer") },
+      njs_str("TypeError: \"path\" must be a string or Buffer") },
 
     { njs_str("var fs = require('fs');"
               "fs.readFileSync('/njs_unknown_path', {flag:'xx'})"),
-      njs_str("Error: Unknown file open flags: \"xx\"") },
+      njs_str("TypeError: Unknown file open flags: \"xx\"") },
 
     { njs_str("var fs = require('fs');"
               "fs.readFileSync(Buffer.from('/njs_unknown_path'), {encoding:'ascii'})"),
@@ -20102,38 +20105,38 @@ static njs_unit_test_t  njs_fs_module_test[] =
 
     { njs_str("var fs = require('fs');"
               "fs.readFileSync('/njs_unknown_path', true)"),
-      njs_str("Error: Unknown options type (a string or object required)") },
+      njs_str("TypeError: Unknown options type (a string or object required)") },
 
 
     /* require('fs').writeFile() */
 
     { njs_str("var fs = require('fs');"
               "fs.writeFile()"),
-      njs_str("Error: \"path\" must be a string or Buffer") },
+      njs_str("TypeError: \"path\" must be a string or Buffer") },
 
     { njs_str("var fs = require('fs');"
               "fs.writeFile({}, '', function () {})"),
-      njs_str("Error: \"path\" must be a string or Buffer") },
+      njs_str("TypeError: \"path\" must be a string or Buffer") },
 
     { njs_str("var fs = require('fs');"
               "fs.writeFile('/njs_unknown_path')"),
-      njs_str("Error: \"callback\" must be a function") },
+      njs_str("TypeError: \"callback\" must be a function") },
 
     { njs_str("var fs = require('fs');"
               "fs.writeFile('/njs_unknown_path', '')"),
-      njs_str("Error: \"callback\" must be a function") },
+      njs_str("TypeError: \"callback\" must be a function") },
 
     { njs_str("var fs = require('fs');"
               "fs.writeFile('/njs_unknown_path', '', undefined)"),
-      njs_str("Error: \"callback\" must be a function") },
+      njs_str("TypeError: \"callback\" must be a function") },
 
     { njs_str("var fs = require('fs');"
               "fs.writeFile('/njs_unknown_path', '', 'utf8')"),
-      njs_str("Error: \"callback\" must be a function") },
+      njs_str("TypeError: \"callback\" must be a function") },
 
     { njs_str("var fs = require('fs');"
               "fs.writeFile('/njs_unknown_path', '', {flag:'xx'}, function () {})"),
-      njs_str("Error: Unknown file open flags: \"xx\"") },
+      njs_str("TypeError: Unknown file open flags: \"xx\"") },
 
     { njs_str("var fs = require('fs');"
               "fs.writeFile('/njs_unknown_path', '', {encoding:'ascii'}, function () {})"),
@@ -20145,21 +20148,21 @@ static njs_unit_test_t  njs_fs_module_test[] =
 
     { njs_str("var fs = require('fs');"
               "fs.writeFile('/njs_unknown_path', '', true, function () {})"),
-      njs_str("Error: Unknown options type (a string or object required)") },
+      njs_str("TypeError: Unknown options type (a string or object required)") },
 
     /* require('fs').writeFileSync() */
 
     { njs_str("var fs = require('fs');"
               "fs.writeFileSync()"),
-      njs_str("Error: \"path\" must be a string or Buffer") },
+      njs_str("TypeError: \"path\" must be a string or Buffer") },
 
     { njs_str("var fs = require('fs');"
               "fs.writeFileSync({}, '')"),
-      njs_str("Error: \"path\" must be a string or Buffer") },
+      njs_str("TypeError: \"path\" must be a string or Buffer") },
 
     { njs_str("var fs = require('fs');"
               "fs.writeFileSync('/njs_unknown_path', '', {flag:'xx'})"),
-      njs_str("Error: Unknown file open flags: \"xx\"") },
+      njs_str("TypeError: Unknown file open flags: \"xx\"") },
 
     { njs_str("var fs = require('fs');"
               "fs.writeFileSync('/njs_unknown_path', '', {encoding:'ascii'})"),
@@ -20171,17 +20174,17 @@ static njs_unit_test_t  njs_fs_module_test[] =
 
     { njs_str("var fs = require('fs');"
               "fs.writeFileSync('/njs_unknown_path', '', true)"),
-      njs_str("Error: Unknown options type (a string or object required)") },
+      njs_str("TypeError: Unknown options type (a string or object required)") },
 
     /* require('fs').renameSync() */
 
     { njs_str("var fs = require('fs');"
               "fs.renameSync()"),
-      njs_str("Error: \"oldPath\" must be a string or Buffer") },
+      njs_str("TypeError: \"oldPath\" must be a string or Buffer") },
 
     { njs_str("var fs = require('fs');"
               "fs.renameSync('/njs_unknown_path')"),
-      njs_str("Error: \"newPath\" must be a string or Buffer") },
+      njs_str("TypeError: \"newPath\" must be a string or Buffer") },
 
     { njs_str("var fs = require('fs');"
               "[undefined, null, false, NaN, Symbol(), {}, Object('/njs_unknown_path')]"
@@ -20201,29 +20204,29 @@ static njs_unit_test_t  njs_fs_module_test[] =
 
     { njs_str("var fs = require('fs');"
               "fs.access()"),
-      njs_str("Error: \"path\" must be a string or Buffer") },
+      njs_str("TypeError: \"path\" must be a string or Buffer") },
 
     { njs_str("var fs = require('fs');"
               "fs.access('/njs_unknown_path')"),
-      njs_str("Error: \"callback\" must be a function") },
+      njs_str("TypeError: \"callback\" must be a function") },
 
     { njs_str("var fs = require('fs');"
               "fs.access('/njs_unknown_path', fs.constants.F_OK)"),
-      njs_str("Error: \"callback\" must be a function") },
+      njs_str("TypeError: \"callback\" must be a function") },
 
     { njs_str("var fs = require('fs');"
               "fs.access('/njs_unknown_path', 'fail', function () {})"),
-      njs_str("Error: \"mode\" must be a number") },
+      njs_str("TypeError: \"mode\" must be a number") },
 
     /* require('fs').accessSync() */
 
     { njs_str("var fs = require('fs');"
               "fs.accessSync()"),
-      njs_str("Error: \"path\" must be a string or Buffer") },
+      njs_str("TypeError: \"path\" must be a string or Buffer") },
 
     { njs_str("var fs = require('fs');"
               "fs.accessSync('/njs_unknown_path', 'fail')"),
-      njs_str("Error: \"mode\" must be a number") },
+      njs_str("TypeError: \"mode\" must be a number") },
 
     { njs_str("var "
               "fs = require('fs'),"
@@ -20308,7 +20311,7 @@ static njs_unit_test_t  njs_fs_module_test[] =
 
     { njs_str("var fs = require('fs');"
               "fs.Dirent('file', 123)"),
-      njs_str("Error: the Dirent constructor must be called with new") },
+      njs_str("TypeError: the Dirent constructor must be called with new") },
 
     { njs_str("var fs = require('fs');"
               "var e = new fs.Dirent('file', 123); [e.name, e.type]"),
@@ -20444,25 +20447,25 @@ static njs_unit_test_t  njs_crypto_module_test[] =
               "'d9f5aeb06abebb3be3f38adec9a2e3b94228d52193be923eb4e24c9b56ee0930']]") },
 
     { njs_str("var h = require('crypto').createHash()"),
-      njs_str("Error: algorithm must be a string") },
+      njs_str("TypeError: algorithm must be a string") },
 
     { njs_str("var h = require('crypto').createHash([])"),
-      njs_str("Error: algorithm must be a string") },
+      njs_str("TypeError: algorithm must be a string") },
 
     { njs_str("var h = require('crypto').createHash('sha512')"),
-      njs_str("Error: not supported algorithm: \"sha512\"") },
+      njs_str("TypeError: not supported algorithm: \"sha512\"") },
 
     { njs_str("var h = require('crypto').createHash('sha1');"
               "h.update()"),
-      njs_str("Error: data is not a string or Buffer-like object") },
+      njs_str("TypeError: data is not a string or Buffer-like object") },
 
     { njs_str("var h = require('crypto').createHash('sha1');"
               "h.update({})"),
-      njs_str("Error: data is not a string or Buffer-like object") },
+      njs_str("TypeError: data is not a string or Buffer-like object") },
 
     { njs_str("var h = require('crypto').createHash('sha1');"
               "h.update('A').digest('latin1')"),
-      njs_str("Error: Unknown digest encoding: \"latin1\"") },
+      njs_str("TypeError: Unknown digest encoding: \"latin1\"") },
 
     { njs_str("require('crypto').createHash('sha1').digest() instanceof Buffer"),
       njs_str("true") },
@@ -20562,16 +20565,16 @@ static njs_unit_test_t  njs_crypto_module_test[] =
       njs_str("5647b6c429701ff512f0f18232b4507065d2376ca8899a816a0a6e721bf8ddcc") },
 
     { njs_str("var h = require('crypto').createHmac()"),
-      njs_str("Error: algorithm must be a string") },
+      njs_str("TypeError: algorithm must be a string") },
 
     { njs_str("var h = require('crypto').createHmac([])"),
-      njs_str("Error: algorithm must be a string") },
+      njs_str("TypeError: algorithm must be a string") },
 
     { njs_str("var h = require('crypto').createHmac('sha512', '')"),
-      njs_str("Error: not supported algorithm: \"sha512\"") },
+      njs_str("TypeError: not supported algorithm: \"sha512\"") },
 
     { njs_str("var h = require('crypto').createHmac('sha1', [])"),
-      njs_str("Error: key is not a string or Buffer-like object") },
+      njs_str("TypeError: key is not a string or Buffer-like object") },
 
     { njs_str("var h = require('crypto').createHmac('sha1', 'secret key');"
               "h.update('A').digest('hex'); h.digest('hex')"),
@@ -20586,7 +20589,7 @@ static njs_unit_test_t  njs_crypto_module_test[] =
 
     { njs_str("var cr = require('crypto'); var h = cr.createHash('sha1');"
               "h.update.call(cr.createHmac('sha1', 's'), '')"),
-      njs_str("Error: \"this\" is not a hash object") },
+      njs_str("TypeError: \"this\" is not a hash object") },
 };
 
 static njs_unit_test_t  njs_querystring_module_test[] =
@@ -20723,12 +20726,12 @@ static njs_unit_test_t  njs_querystring_module_test[] =
 
     { njs_str("var qs = require('querystring');"
               "qs.parse('baz=fuz&muz=tax', null, null, {decodeURIComponent: 123});"),
-      njs_str("Error: option decodeURIComponent is not a function") },
+      njs_str("TypeError: option decodeURIComponent is not a function") },
 
     { njs_str("var qs = require('querystring');"
               "qs.unescape = 123;"
               "qs.parse('baz=fuz&muz=tax');"),
-    njs_str("Error: QueryString.unescape is not a function") },
+    njs_str("TypeError: QueryString.unescape is not a function") },
 
     { njs_str("var qs = require('querystring'); var out = [];"
               "qs.unescape = (key) => {out.push(key)};"
@@ -20841,12 +20844,12 @@ static njs_unit_test_t  njs_querystring_module_test[] =
     { njs_str("var qs = require('querystring');"
               "qs.stringify({'baz': 'fuz', 'muz': 'tax'}, null, null, {encodeURIComponent: 123});"
               "out.join('; ')"),
-      njs_str("Error: option encodeURIComponent is not a function") },
+      njs_str("TypeError: option encodeURIComponent is not a function") },
 
     { njs_str("var qs = require('querystring');"
               "qs.escape = 123;"
               "qs.stringify({'baz': 'fuz', 'muz': 'tax'})"),
-      njs_str("Error: QueryString.escape is not a function") },
+      njs_str("TypeError: QueryString.escape is not a function") },
 
     { njs_str("var qs = require('querystring'); var out = [];"
               "qs.escape = (key) => {out.push(key)};"
@@ -22084,7 +22087,7 @@ static njs_unit_test_t  njs_xml_test[] =
 
     { njs_str("var xml = require('xml');"
               "var doc = xml.parse(`<r></r>`); xml.exclusiveC14n(doc, 1)"),
-      njs_str("Error: \"excluding\" argument is not a XMLNode object") },
+      njs_str("TypeError: \"excluding\" argument is not a XMLNode object") },
 
     { njs_str(NJS_XML_DOC
               "doc.$root.$text"),
@@ -22163,12 +22166,12 @@ static njs_unit_test_t  njs_xml_test[] =
 
     { njs_str(NJS_XML_DOC
               "doc.$root.setAttribute('<', 'xxx')"),
-      njs_str("Error: attribute name \"<\" is not valid") },
+      njs_str("TypeError: attribute name \"<\" is not valid") },
 
     { njs_str(NJS_XML_DOC
               "doc.$root.$text = 'WAKA';"
               "doc.$root['$attr$' + 'x'.repeat(1024)] = 1;"),
-      njs_str("Error: njs_xml_str_to_c_string() very long string, length >= 511") },
+      njs_str("InternalError: njs_xml_str_to_c_string() very long string, length >= 511") },
 
     { njs_str(NJS_XML_DOC
               "delete doc.note.to.$attr$a;"
@@ -22355,6 +22358,48 @@ static njs_unit_test_t  njs_module_test[] =
 
 static njs_unit_test_t  njs_externals_test[] =
 {
+    { njs_str("(new ExternalError('XXX')) instanceof ExternalError"),
+      njs_str("true") },
+
+    { njs_str("(new ExternalError('XXX')) instanceof Error"),
+      njs_str("true") },
+
+    { njs_str("(new ExternalError()).message"),
+      njs_str("") },
+
+    { njs_str("(new ExternalError('XXX')).message"),
+      njs_str("XXX") },
+
+    { njs_str("(new ExternalError('XXX')).constructor == ExternalError"),
+      njs_str("true") },
+
+    { njs_str("(new ExternalError('XXX')).name"),
+      njs_str("ExternalError") },
+
+    { njs_str("(new ExternalError('XXX')).__proto__.name"),
+      njs_str("ExternalError") },
+
+    { njs_str("(new ExternalError('XXX')).__proto__.__proto__.name"),
+      njs_str("Error") },
+
+    { njs_str("(new ExternalError('XXX'))"),
+      njs_str("ExternalError: XXX") },
+
+    { njs_str("(new ExternalError('XXX')).toString()"),
+      njs_str("ExternalError: XXX") },
+
+    { njs_str("njs.dump(new ExternalError('XXX'))"),
+      njs_str("ExternalError: XXX") },
+
+    { njs_str("JSON.stringify(new ExternalError('XXX'))"),
+      njs_str("{}") },
+
+    { njs_str("Object.getOwnPropertyNames(new ExternalError('XXX'))"),
+      njs_str("message") },
+
+    { njs_str("var ee; try{ $r.customException() } catch (e) { if (!(e instanceof ExternalError)) { throw 'Oops'} ee = e;}; ee.toString()"),
+      njs_str("ExternalError: Oops") },
+
     { njs_str("typeof $r"),
       njs_str("object") },
 
@@ -22580,7 +22625,7 @@ static njs_unit_test_t  njs_externals_test[] =
 #endif
 
     { njs_str("Object.keys(this).sort()"),
-      njs_str("$262,$r,$r2,$r3,$shared,ExternalConstructor," NCRYPTO "global,njs,process") },
+      njs_str("$262,$r,$r2,$r3,$shared,ExternalConstructor,ExternalError," NCRYPTO "global,njs,process") },
 
     { njs_str("Object.getOwnPropertySymbols($r2)[0] == Symbol.toStringTag"),
       njs_str("true") },
@@ -22848,12 +22893,12 @@ static njs_unit_test_t  njs_shared_test[] =
       njs_str("37") },
 
     { njs_str("var fs = require('fs'); fs.readFileSync()"),
-      njs_str("Error: \"path\" must be a string or Buffer\n"
+      njs_str("TypeError: \"path\" must be a string or Buffer\n"
               "    at fs.readFileSync (native)\n"
               "    at main (:1)\n") },
 
     { njs_str("import fs from 'fs'; fs.readFileSync()"),
-      njs_str("Error: \"path\" must be a string or Buffer\n"
+      njs_str("TypeError: \"path\" must be a string or Buffer\n"
               "    at fs.readFileSync (native)\n"
               "    at main (:1)\n") },
 
@@ -23279,24 +23324,24 @@ static njs_unit_test_t  njs_backtraces_test[] =
               "    at main (:1)\n") },
 
     { njs_str("require('crypto').createHash('sha')"),
-      njs_str("Error: not supported algorithm: \"sha\"\n"
+      njs_str("TypeError: not supported algorithm: \"sha\"\n"
               "    at crypto.createHash (native)\n"
               "    at main (:1)\n") },
 
     { njs_str("var h = require('crypto').createHash('sha1');"
               "h.update([])"),
-      njs_str("Error: data is not a string or Buffer-like object\n"
+      njs_str("TypeError: data is not a string or Buffer-like object\n"
               "    at Hash.update (native)\n"
               "    at main (:1)\n") },
 
     { njs_str("require('crypto').createHmac('sha1', [])"),
-      njs_str("Error: key is not a string or Buffer-like object\n"
+      njs_str("TypeError: key is not a string or Buffer-like object\n"
               "    at crypto.createHmac (native)\n"
               "    at main (:1)\n") },
 
     { njs_str("var h = require('crypto').createHmac('sha1', 'secret');"
               "h.update([])"),
-      njs_str("Error: data is not a string or Buffer-like object\n"
+      njs_str("TypeError: data is not a string or Buffer-like object\n"
               "    at Hmac.update (native)\n"
               "    at main (:1)\n") },
 
@@ -23683,6 +23728,19 @@ done:
 }
 
 
+njs_module_t *njs_unit_test_addon_modules[] = {
+    &njs_unit_test_262_module,
+    NULL,
+};
+
+
+njs_module_t *njs_unit_test_addon_external_modules[] = {
+    &njs_unit_test_262_module,
+    &njs_unit_test_external_module,
+    NULL,
+};
+
+
 static njs_int_t
 njs_unit_test(njs_unit_test_t tests[], size_t num, njs_str_t *name,
     njs_opts_t *opts, njs_stat_t *stat)
@@ -23716,23 +23774,13 @@ njs_unit_test(njs_unit_test_t tests[], size_t num, njs_str_t *name,
         options.module = opts->module;
         options.unsafe = opts->unsafe;
         options.backtrace = opts->backtrace;
+        options.addons = opts->externals ? njs_unit_test_addon_external_modules
+                                         : njs_unit_test_addon_modules;
 
         vm = njs_vm_create(&options);
         if (vm == NULL) {
             njs_printf("njs_vm_create() failed\n");
             goto done;
-        }
-
-        ret = njs_externals_262_init(vm);
-        if (ret != NJS_OK) {
-            goto done;
-        }
-
-        if (opts->externals) {
-            ret = njs_externals_shared_init(vm);
-            if (ret != NJS_OK) {
-                goto done;
-            }
         }
 
         start = tests[i].script.start;
@@ -23855,6 +23903,8 @@ njs_interactive_test(njs_unit_test_t tests[], size_t num, njs_str_t *name,
         options.init = 1;
         options.interactive = 1;
         options.backtrace = 1;
+        options.addons = opts->externals ? njs_unit_test_addon_external_modules
+                                         : njs_unit_test_addon_modules;
 
         vm = njs_vm_create(&options);
         if (vm == NULL) {
@@ -23862,17 +23912,7 @@ njs_interactive_test(njs_unit_test_t tests[], size_t num, njs_str_t *name,
             goto done;
         }
 
-        ret = njs_externals_262_init(vm);
-        if (ret != NJS_OK) {
-            goto done;
-        }
-
         if (opts->externals) {
-            ret = njs_externals_shared_init(vm);
-            if (ret != NJS_OK) {
-                goto done;
-            }
-
             ret = njs_externals_init(vm);
             if (ret != NJS_OK) {
                 goto done;
@@ -25092,7 +25132,7 @@ static njs_test_suite_t  njs_suites[] =
       njs_disabled_denormals_tests },
 
     {
-#if (NJS_HAVE_OPENSSL)
+#if (NJS_HAVE_OPENSSL && !NJS_HAVE_MEMORY_SANITIZER)
         njs_str("webcrypto"),
 #else
         njs_str(""),

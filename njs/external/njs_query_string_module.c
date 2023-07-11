@@ -105,6 +105,7 @@ static njs_external_t  njs_ext_query_string[] = {
 
 njs_module_t  njs_query_string_module = {
     .name = njs_str("querystring"),
+    .preinit = NULL,
     .init = njs_query_string_init,
 };
 
@@ -422,7 +423,7 @@ njs_query_string_parse(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
 
         if (val != NULL) {
             if (!njs_value_is_valid_number(val)) {
-                njs_vm_error(vm, "is not a number");
+                njs_vm_type_error(vm, "is not a number");
                 return NJS_ERROR;
             }
 
@@ -437,7 +438,8 @@ njs_query_string_parse(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
 
         if (val != NULL) {
             if (njs_slow_path(!njs_value_is_function(val))) {
-                njs_vm_error(vm, "option decodeURIComponent is not a function");
+                njs_vm_type_error(vm, "option decodeURIComponent is not "
+                                  "a function");
                 return NJS_ERROR;
             }
 
@@ -449,7 +451,7 @@ njs_query_string_parse(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
         val = njs_vm_object_prop(vm, this, &njs_unescape_str, &value);
 
         if (val == NULL || !njs_value_is_function(val)) {
-            njs_vm_error(vm, "QueryString.unescape is not a function");
+            njs_vm_type_error(vm, "QueryString.unescape is not a function");
             return NJS_ERROR;
         }
 
@@ -728,7 +730,8 @@ njs_query_string_stringify(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
 
         if (val != NULL) {
             if (njs_slow_path(!njs_value_is_function(val))) {
-                njs_vm_error(vm, "option encodeURIComponent is not a function");
+                njs_vm_type_error(vm, "option encodeURIComponent is not "
+                                  "a function");
                 return NJS_ERROR;
             }
 
@@ -740,7 +743,7 @@ njs_query_string_stringify(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
         val = njs_vm_object_prop(vm, this, &njs_escape_str, &value);
 
         if (val == NULL || !njs_value_is_function(val)) {
-            njs_vm_error(vm, "QueryString.escape is not a function");
+            njs_vm_type_error(vm, "QueryString.escape is not a function");
             return NJS_ERROR;
         }
 

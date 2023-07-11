@@ -1407,6 +1407,7 @@ static njs_int_t    njs_fs_bytes_written_proto_id;
 
 njs_module_t  njs_fs_module = {
     .name = njs_str("fs"),
+    .preinit = NULL,
     .init = njs_fs_init,
 };
 
@@ -1433,7 +1434,7 @@ njs_fs_access(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     if (calltype == NJS_FS_CALLBACK) {
         callback = njs_arg(args, nargs, njs_min(nargs - 1, 3));
         if (!njs_value_is_function(callback)) {
-            njs_vm_error(vm, "\"callback\" must be a function");
+            njs_vm_type_error(vm, "\"callback\" must be a function");
             return NJS_ERROR;
         }
 
@@ -1449,7 +1450,7 @@ njs_fs_access(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
         md = F_OK;
 
     } else {
-        njs_vm_error(vm, "\"mode\" must be a number");
+        njs_vm_type_error(vm, "\"mode\" must be a number");
         return NJS_ERROR;
     }
 
@@ -1587,7 +1588,7 @@ njs_fs_mkdir(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     if (njs_slow_path(calltype == NJS_FS_CALLBACK)) {
         callback = njs_arg(args, nargs, njs_min(nargs - 1, 3));
         if (!njs_value_is_function(callback)) {
-            njs_vm_error(vm, "\"callback\" must be a function");
+            njs_vm_type_error(vm, "\"callback\" must be a function");
             return NJS_ERROR;
         }
 
@@ -1604,8 +1605,8 @@ njs_fs_mkdir(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
 
     } else if (!njs_value_is_undefined(options)) {
         if (!njs_value_is_object(options)) {
-            njs_vm_error(vm, "Unknown options type"
-                         "(a number or object required)");
+            njs_vm_type_error(vm, "Unknown options type"
+                             "(a number or object required)");
             return NJS_ERROR;
         }
 
@@ -1669,7 +1670,8 @@ njs_fs_read(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     }
 
     if (njs_slow_path(offset < 0 || (size_t) offset > data.length)) {
-        njs_vm_error(vm, "offset is out of range (must be <= %z)", data.length);
+        njs_vm_range_error(vm, "offset is out of range (must be <= %z)",
+                           data.length);
         return NJS_ERROR;
     }
 
@@ -1685,8 +1687,8 @@ njs_fs_read(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
         }
 
         if (njs_slow_path(length < 0 || (size_t) length > data.length)) {
-            njs_vm_error(vm, "length is out of range (must be <= %z)",
-                         data.length);
+            njs_vm_range_error(vm, "length is out of range (must be <= %z)",
+                               data.length);
             return NJS_ERROR;
         }
 
@@ -1760,7 +1762,7 @@ njs_fs_read_file(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     if (calltype == NJS_FS_CALLBACK) {
         callback = njs_arg(args, nargs, njs_min(nargs - 1, 3));
         if (!njs_value_is_function(callback)) {
-            njs_vm_error(vm, "\"callback\" must be a function");
+            njs_vm_type_error(vm, "\"callback\" must be a function");
             return NJS_ERROR;
         }
 
@@ -1777,8 +1779,8 @@ njs_fs_read_file(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
 
     } else if (!njs_value_is_undefined(options)) {
         if (!njs_value_is_object(options)) {
-            njs_vm_error(vm, "Unknown options type "
-                         "(a string or object required)");
+            njs_vm_type_error(vm, "Unknown options type "
+                              "(a string or object required)");
             return NJS_ERROR;
         }
 
@@ -1880,7 +1882,7 @@ njs_fs_readdir(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     if (njs_slow_path(calltype == NJS_FS_CALLBACK)) {
         callback = njs_arg(args, nargs, njs_min(nargs - 1, 3));
         if (!njs_value_is_function(callback)) {
-            njs_vm_error(vm, "\"callback\" must be a function");
+            njs_vm_type_error(vm, "\"callback\" must be a function");
             return NJS_ERROR;
         }
         if (options == callback) {
@@ -1896,8 +1898,8 @@ njs_fs_readdir(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
 
     } else if (!njs_value_is_undefined(options)) {
         if (!njs_value_is_object(options)) {
-            njs_vm_error(vm, "Unknown options type "
-                         "(a string or object required)");
+            njs_vm_type_error(vm, "Unknown options type "
+                             "(a string or object required)");
             return NJS_ERROR;
         }
 
@@ -2022,7 +2024,7 @@ njs_fs_realpath(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     if (calltype == NJS_FS_CALLBACK) {
         callback = njs_arg(args, nargs, njs_min(nargs - 1, 3));
         if (!njs_value_is_function(callback)) {
-            njs_vm_error(vm, "\"callback\" must be a function");
+            njs_vm_type_error(vm, "\"callback\" must be a function");
             return NJS_ERROR;
         }
 
@@ -2038,8 +2040,8 @@ njs_fs_realpath(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
 
     } else if (!njs_value_is_undefined(options)) {
         if (!njs_value_is_object(options)) {
-            njs_vm_error(vm, "Unknown options type "
-                           "(a string or object required)");
+            njs_vm_type_error(vm, "Unknown options type "
+                              "(a string or object required)");
             return NJS_ERROR;
         }
 
@@ -2101,7 +2103,7 @@ njs_fs_rename(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     if (calltype == NJS_FS_CALLBACK) {
         callback = njs_arg(args, nargs, 3);
         if (!njs_value_is_function(callback)) {
-            njs_vm_error(vm, "\"callback\" must be a function");
+            njs_vm_type_error(vm, "\"callback\" must be a function");
             return NJS_ERROR;
         }
     }
@@ -2152,7 +2154,7 @@ njs_fs_rmdir(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     if (njs_slow_path(calltype == NJS_FS_CALLBACK)) {
         callback = njs_arg(args, nargs, njs_min(nargs - 1, 3));
         if (!njs_value_is_function(callback)) {
-            njs_vm_error(vm, "\"callback\" must be a function");
+            njs_vm_type_error(vm, "\"callback\" must be a function");
             return NJS_ERROR;
         }
         if (options == callback) {
@@ -2164,8 +2166,8 @@ njs_fs_rmdir(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
 
     if (njs_slow_path(!njs_value_is_undefined(options))) {
         if (!njs_value_is_object(options)) {
-            njs_vm_error(vm, "Unknown options type "
-                           "(an object required)");
+            njs_vm_type_error(vm, "Unknown options type "
+                              "(an object required)");
             return NJS_ERROR;
         }
 
@@ -2229,7 +2231,7 @@ njs_fs_stat(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     if (njs_slow_path(calltype == NJS_FS_CALLBACK)) {
         callback = njs_arg(args, nargs, njs_min(nargs - 1, 3));
         if (!njs_value_is_function(callback)) {
-            njs_vm_error(vm, "\"callback\" must be a function");
+            njs_vm_type_error(vm, "\"callback\" must be a function");
             return NJS_ERROR;
         }
 
@@ -2242,14 +2244,14 @@ njs_fs_stat(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
 
     if (!njs_value_is_undefined(options)) {
         if (!njs_value_is_object(options)) {
-            njs_vm_error(vm, "Unknown options type "
-                           "(an object required)");
+            njs_vm_type_error(vm, "Unknown options type "
+                              "(an object required)");
             return NJS_ERROR;
         }
 
         value = njs_vm_object_prop(vm, options, &string_bigint, &result);
         if (value != NULL && njs_value_bool(value)) {
-            njs_vm_error(vm, "\"bigint\" is not supported");
+            njs_vm_type_error(vm, "\"bigint\" is not supported");
             return NJS_ERROR;
         }
 
@@ -2328,7 +2330,7 @@ njs_fs_symlink(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     if (calltype == NJS_FS_CALLBACK) {
         callback = njs_arg(args, nargs, njs_min(nargs - 1, 4));
         if (!njs_value_is_function(callback)) {
-            njs_vm_error(vm, "\"callback\" must be a function");
+            njs_vm_type_error(vm, "\"callback\" must be a function");
             return NJS_ERROR;
         }
 
@@ -2340,7 +2342,7 @@ njs_fs_symlink(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     if (njs_slow_path(!njs_value_is_undefined(type)
                       && !njs_value_is_string(type)))
     {
-        njs_vm_error(vm, "\"type\" must be a string");
+        njs_vm_type_error(vm, "\"type\" must be a string");
         return NJS_ERROR;
     }
 
@@ -2380,7 +2382,7 @@ njs_fs_unlink(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     if (calltype == NJS_FS_CALLBACK) {
         callback = njs_arg(args, nargs, 2);
         if (!njs_value_is_function(callback)) {
-            njs_vm_error(vm, "\"callback\" must be a function");
+            njs_vm_type_error(vm, "\"callback\" must be a function");
             return NJS_ERROR;
         }
     }
@@ -2474,8 +2476,8 @@ njs_fs_write(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     }
 
     if (njs_slow_path(offset < 0 || (size_t) offset > data.length)) {
-        njs_vm_error(vm, "offset is out of range (must be <= %z)",
-                     data.length);
+        njs_vm_range_error(vm, "offset is out of range (must be <= %z)",
+                           data.length);
         return NJS_ERROR;
     }
 
@@ -2491,8 +2493,8 @@ njs_fs_write(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
         }
 
         if (njs_slow_path(length < 0 || (size_t) length > data.length)) {
-            njs_vm_error(vm, "length is out of range (must be <= %z)",
-                         data.length);
+            njs_vm_range_error(vm, "length is out of range (must be <= %z)",
+                               data.length);
             return NJS_ERROR;
         }
 
@@ -2577,7 +2579,7 @@ njs_fs_write_file(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     if (calltype == NJS_FS_CALLBACK) {
         callback = njs_arg(args, nargs, njs_min(nargs - 1, 4));
         if (!njs_value_is_function(callback)) {
-            njs_vm_error(vm, "\"callback\" must be a function");
+            njs_vm_type_error(vm, "\"callback\" must be a function");
             return NJS_ERROR;
         }
 
@@ -2595,8 +2597,8 @@ njs_fs_write_file(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
 
     } else if (!njs_value_is_undefined(options)) {
         if (!njs_value_is_object(options)) {
-            njs_vm_error(vm, "Unknown options type "
-                         "(a string or object required)");
+            njs_vm_type_error(vm, "Unknown options type "
+                              "(a string or object required)");
             return NJS_ERROR;
         }
 
@@ -2781,7 +2783,7 @@ njs_fs_make_path(njs_vm_t *vm, char *path, mode_t md, njs_bool_t recursive,
         }
 
         if (njs_slow_path((p - path) > NJS_MAX_PATH)) {
-            njs_vm_error(vm, "too large path");
+            njs_vm_internal_error(vm, "too large path");
             return NJS_ERROR;
         }
 
@@ -3064,18 +3066,19 @@ njs_fs_path(njs_vm_t *vm, char storage[NJS_MAX_PATH + 1], njs_value_t *src,
         }
 
     } else {
-        njs_vm_error(vm, "\"%s\" must be a string or Buffer", prop_name);
+        njs_vm_type_error(vm, "\"%s\" must be a string or Buffer", prop_name);
         return NULL;
     }
 
     if (njs_slow_path(str.length > NJS_MAX_PATH - 1)) {
-        njs_vm_error(vm, "\"%s\" is too long >= %d", prop_name, NJS_MAX_PATH);
+        njs_vm_internal_error(vm, "\"%s\" is too long >= %d", prop_name,
+                              NJS_MAX_PATH);
         return NULL;
     }
 
     if (njs_slow_path(memchr(str.start, '\0', str.length) != 0)) {
-        njs_vm_error(vm, "\"%s\" must be a Buffer without null bytes",
-                       prop_name);
+        njs_vm_type_error(vm, "\"%s\" must be a Buffer without null bytes",
+                          prop_name);
         return NULL;
     }
 
@@ -3110,7 +3113,7 @@ njs_fs_flags(njs_vm_t *vm, njs_value_t *value, int default_flags)
         }
     }
 
-    njs_vm_error(vm, "Unknown file open flags: \"%V\"", &flags);
+    njs_vm_type_error(vm, "Unknown file open flags: \"%V\"", &flags);
 
     return -1;
 }
@@ -3301,7 +3304,7 @@ njs_fs_result(njs_vm_t *vm, njs_opaque_value_t *result, njs_index_t calltype,
         return NJS_OK;
 
     default:
-        njs_vm_error(vm, "invalid calltype");
+        njs_vm_internal_error(vm, "invalid calltype");
 
         return NJS_ERROR;
     }
@@ -3339,7 +3342,7 @@ njs_fs_dirent_constructor(njs_vm_t *vm, njs_value_t *args,
     njs_uint_t nargs, njs_index_t unused, njs_value_t *retval)
 {
     if (njs_slow_path(!njs_vm_constructor(vm))) {
-        njs_vm_error(vm, "the Dirent constructor must be called with new");
+        njs_vm_type_error(vm, "the Dirent constructor must be called with new");
         return NJS_ERROR;
     }
 
@@ -3365,7 +3368,8 @@ njs_fs_dirent_test(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
     if (njs_slow_path(njs_value_is_number(type)
                       && (njs_value_number(type) == NJS_DT_INVALID)))
     {
-        njs_vm_error(vm, "dentry type is not supported on this platform");
+        njs_vm_internal_error(vm, "dentry type is not supported on this "
+                              "platform");
         return NJS_ERROR;
     }
 
@@ -3603,7 +3607,7 @@ njs_fs_filehandle_close(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
 
     fh = njs_vm_external(vm, njs_fs_filehandle_proto_id, njs_argument(args, 0));
     if (njs_slow_path(fh == NULL)) {
-        njs_vm_error(vm, "\"this\" is not a filehandle object");
+        njs_vm_type_error(vm, "\"this\" is not a filehandle object");
         return NJS_ERROR;
     }
 
@@ -3629,7 +3633,7 @@ njs_fs_filehandle_value_of(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
 
     fh = njs_vm_external(vm, njs_fs_filehandle_proto_id, njs_argument(args, 0));
     if (njs_slow_path(fh == NULL)) {
-        njs_vm_error(vm, "\"this\" is not a filehandle object");
+        njs_vm_type_error(vm, "\"this\" is not a filehandle object");
         return NJS_ERROR;
     }
 

@@ -254,6 +254,7 @@ static njs_vm_ops_t njs_console_ops = {
 
 njs_module_t  njs_console_module = {
     .name = njs_str("console"),
+    .preinit = NULL,
     .init = njs_externals_init,
 };
 
@@ -1073,19 +1074,24 @@ njs_cb_line_handler(char *line_in)
     njs_int_t  ret;
     njs_str_t  line;
 
-    if (line_in == NULL || strcmp(line_in, ".exit") == 0) {
+    if (line_in == NULL) {
         njs_running = NJS_DONE;
         return;
     }
 
-    njs_sigint_count = 0;
-
     line.start = (u_char *) line_in;
     line.length = njs_strlen(line.start);
 
+    if (strcmp(line_in, ".exit") == 0) {
+        njs_running = NJS_DONE;
+        goto free_line;
+    }
+
+    njs_sigint_count = 0;
+
     if (line.length == 0) {
         rl_callback_handler_install(">> ", njs_cb_line_handler);
-        return;
+        goto free_line;
     }
 
     add_history((char *) line.start);
@@ -1098,6 +1104,8 @@ njs_cb_line_handler(char *line_in)
     if (ret == NJS_OK) {
         rl_callback_handler_install(">> ", njs_cb_line_handler);
     }
+
+free_line:
 
     free(line.start);
 }

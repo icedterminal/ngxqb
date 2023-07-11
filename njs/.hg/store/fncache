@@ -157,6 +157,7 @@ data/nxt/nxt_array.c.i
 data/test/js/promise_s12.t.js.i
 data/test/js/import_as_default.t.js.i
 data/test/module/name.js.i
+data/nginx/ngx_js_shared_dict.c.i
 data/test/fs/promises_02.t.js.i
 data/nxt/nxt_unicode_upper_case.pl.i
 data/test/js/promise_s3.js.i
@@ -259,6 +260,7 @@ data/ts/njs_modules/xml.d.ts.i
 data/test/module/sub/sub2.js.i
 data/nginx/t/js_headers.t.i
 data/test/harness/runTsuite.js.i
+data/ts/njs_webapi.d.ts.i
 data/nginx/t/js_ngx.t.i
 data/src/njs_encoding.h.i
 data/njs/njs_time.h.i
@@ -378,6 +380,7 @@ data/src/njs_array_buffer.c.i
 data/test/js/import_not_found.t.js.i
 data/nginx/t/README.i
 data/nginx/t/js_fetch.t.i
+data/nginx/ngx_js_shared_dict.h.i
 data/ts/njs_webcrypto.d.ts.i
 data/nginx/t/stream_js_buffer.t.i
 data/src/njs_dtoa_fixed.h.i
@@ -550,6 +553,7 @@ data/test/js/module/export_non_assignment.js.i
 data/test/js/import_export_object.t.js.i
 data/test/js/promise_s16.t.js.i
 data/src/njs_md5.h.i
+data/nginx/t/js_shared_dict.t.i
 data/nginx/t/js_var.t.i
 data/test/js/promise_race.js.i
 data/njs/njs_object.h.i
@@ -841,6 +845,7 @@ data/src/njs_queue.h.i
 data/src/ts/querystring.d.ts.i
 data/test/js/async_bind.t.js.i
 data/src/njs_module.h.i
+data/nginx/t/stream_js_shared_dict.t.i
 data/test/js/module/recursive.js.i
 data/test/js/promise_allSettled.js.i
 data/src/njs_array.c.i
@@ -850,4 +855,3 @@ data/test/fs/promises_05.t.js.i
 data/test/js/import_multi_default.t.js.i
 data/nxt/auto/explicit_bzero.i
 data/njs/njs_regexp.c.i
-data/ts/njs_webapi.d.ts.i

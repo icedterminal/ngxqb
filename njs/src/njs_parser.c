@@ -5491,6 +5491,18 @@ njs_parser_iteration_statement_for(njs_parser_t *parser,
 
 
 static njs_int_t
+njs_parser_for_var_in_of_expression_chk_fail(njs_parser_t *parser,
+    njs_lexer_token_t *token, njs_queue_link_t *current)
+{
+    if (parser->ret != NJS_OK) {
+        return njs_parser_failed(parser);
+    }
+
+    return njs_parser_for_var_in_of_expression(parser, token, current);
+}
+
+
+static njs_int_t
 njs_parser_for_expression_map_reparse(njs_parser_t *parser,
     njs_lexer_token_t *token, njs_queue_link_t *current)
 {
@@ -5517,8 +5529,8 @@ njs_parser_for_expression_map_reparse(njs_parser_t *parser,
 
         *text = token->text;
 
-        return njs_parser_after(parser, current, text, 1,
-                                njs_parser_for_var_in_of_expression);
+        return njs_parser_after(parser, current, text, 0,
+                                njs_parser_for_var_in_of_expression_chk_fail);
     }
 
     return njs_parser_stack_pop(parser);
@@ -9187,6 +9199,10 @@ njs_parser_error(njs_vm_t *vm, njs_object_type_t type, njs_str_t *file,
     static const njs_value_t  file_name = njs_string("fileName");
     static const njs_value_t  line_number = njs_string("lineNumber");
 
+    if (njs_slow_path(vm->top_frame == NULL)) {
+        njs_vm_runtime_init(vm);
+    }
+
     p = msg;
     end = msg + NJS_MAX_ERROR_STR;
 
@@ -9205,7 +9221,7 @@ njs_parser_error(njs_vm_t *vm, njs_object_type_t type, njs_str_t *file,
         p = njs_sprintf(p, end, " in %uD", line);
     }
 
-    njs_error_new(vm, &error, type, msg, p - msg);
+    njs_error_new(vm, &error, njs_vm_proto(vm, type), msg, p - msg);
 
     njs_set_number(&value, line);
     njs_value_property_set(vm, &error, njs_value_arg(&line_number), &value);

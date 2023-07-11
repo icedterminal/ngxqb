@@ -18,7 +18,7 @@ njs_async_function_frame_invoke(njs_vm_t *vm, njs_value_t *retval)
     njs_value_t               ctor;
     njs_promise_capability_t  *capability;
 
-    njs_set_function(&ctor, &vm->constructors[NJS_OBJ_TYPE_PROMISE]);
+    njs_set_function(&ctor, &njs_vm_ctor(vm, NJS_OBJ_TYPE_PROMISE));
 
     capability = njs_promise_new_capability(vm, &ctor);
     if (njs_slow_path(capability == NULL)) {
@@ -163,6 +163,8 @@ njs_async_context_free(njs_vm_t *vm, njs_async_ctx_t *ctx)
 
 static const njs_object_prop_t  njs_async_constructor_properties[] =
 {
+    NJS_DECLARE_PROP_NAME("AsyncFunction"),
+
     NJS_DECLARE_PROP_LENGTH(1),
 
     NJS_DECLARE_PROP_HANDLER("prototype", njs_object_prototype_create, 0, 0, 0),
