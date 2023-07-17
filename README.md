@@ -6,8 +6,6 @@
 
 A custom build of NGINX server for the modern web with OpenSSL 3+ (HTTP/3 + QUIC), Brotli and additional components compiled into one.
 
-The target OS is Ubuntu 20.04 and later. 18.04 and earlier is untested. No builds or instructions for containers or other distributions will be provided. I have no interest. [NGINX Proxy Manager](https://nginxproxymanager.com/guide/) is available for those seeking containers or have little know-how. I do not know if this version of NGINX supports HTTP/3 + QUIC. This build is intended for my personal use. I prefer to write manual vhost/conf files or need the software to run on bare metal. If you fit this, feel free to use it.
-
 ---
 
 # Components
@@ -26,6 +24,8 @@ The target OS is Ubuntu 20.04 and later. 18.04 and earlier is untested. No build
 # Use
 You can either use the prebuilt binary, or build yourself. Installer packages are currently not provided.
 
+Note: The default web server user is `www-data` on Debian and `http` on Arch.
+
 ## Prebuilt
 
 ### Initial
@@ -39,7 +39,7 @@ You can either use the prebuilt binary, or build yourself. Installer packages ar
     ```
 4. Set the permissions
     ```bash
-    chown www-data:adm /var/log/nginx; chmod 755 /var/log/nginx; find /var/cache/nginx -type d | xargs chown www-data:root; find /var/cache/nginx -type d | xargs chmod 755
+    chown [www-data|http]:adm /var/log/nginx; chmod 755 /var/log/nginx; find /var/cache/nginx -type d | xargs chown [www-data|http]:root; find /var/cache/nginx -type d | xargs chmod 755
     ```
 5. Start the service
     ```bash
@@ -64,11 +64,17 @@ You can check your NGINX build information with `nginx -V`.
 
 ## Build yourself
 ### Prep
+**Debian based**
 ```bash
 apt install git gcc cmake mercurial libpcre3 libpcre3-dev zlib1g zlib1g-dev libperl-dev libxslt1-dev libgd-ocaml-dev libgeoip-dev -y;
 ```
+**Arch based**
 ```bash
-git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb; git submodule update --init --recursive; cd ../nginx;
+pacman -Sy git gcc cmake mercurial base-devel
+```
+Now clone and init
+```bash
+git clone https://github.com/icedterminal/ngxqb.git; cd ngxqb; git submodule update --init --recursive; cd nginx;
 ```
 
 ### Configure
@@ -82,15 +88,15 @@ You may need to edit the configuration parameters to suit your needs. [A complet
 --modules-path=/etc/nginx/modules \
 --error-log-path=/var/log/nginx/error.log \
 --http-log-path=/var/log/nginx/access.log \
---pid-path=/var/run/nginx.pid \
---lock-path=/var/run/nginx.lock \
+--pid-path=/run/nginx.pid \
+--lock-path=/run/nginx.lock \
 --http-client-body-temp-path=/var/cache/nginx/client_temp \
 --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
 --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
 --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
 --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
---user=www-data \
---group=www-data \
+--user=[www-data|http] \
+--group=[www-data|http] \
 --with-debug \
 --with-compat \
 --with-file-aio \
@@ -105,7 +111,6 @@ You may need to edit the configuration parameters to suit your needs. [A complet
 --with-http_stub_status_module \
 --with-http_v2_module \
 --with-http_v3_module \
---with-http_image_filter_module \
 --with-http_dav_module \
 --with-http_stub_status_module \
 --with-http_slice_module \
@@ -121,7 +126,6 @@ You may need to edit the configuration parameters to suit your needs. [A complet
 --with-openssl-opt=enable-ktls \
 --with-openssl-opt=enable-fips \
 --add-module=../ngx_brotli \
---add-module=../njs/nginx \
 --add-module=../ngx_devel_kit \
 --add-module=../set-misc-nginx-module \
 --with-cc-opt='-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fPIC' \
@@ -145,11 +149,11 @@ cp -r conf/. /etc/nginx/; cp -r docs/html/. /var/www/html/; cp -r docs/html/. /e
 ```
 Set the permissions:
 ```bash
-chmod 755 /usr/sbin/nginx; chown www-data:adm /var/log/nginx; chmod 755 /var/log/nginx; find /var/cache/nginx -type d | xargs chown www-data:root; find /var/cache/nginx -type d | xargs chmod 755
+chmod 755 /usr/sbin/nginx; chown [www-data|http]:adm /var/log/nginx; chmod 755 /var/log/nginx; find /var/cache/nginx -type d | xargs chown [www-data|http]:root; find /var/cache/nginx -type d | xargs chmod 755
 ```
 Create a startup service:
 ```bash
-nano /lib/systemd/system/nginx.service
+nano /etc/systemd/system/nginx.service
 ```
 Paste the following contents in:
 ```
@@ -161,10 +165,10 @@ Wants=network-online.target
 
 [Service]
 Type=forking
-PIDFile=/var/run/nginx.pid
+PIDFile=/run/nginx.pid
 ExecStart=/usr/sbin/nginx -c /etc/nginx/nginx.conf
-ExecReload=/bin/sh -c "/bin/kill -s HUP $(/bin/cat /var/run/nginx.pid)"
-ExecStop=/bin/sh -c "/bin/kill -s TERM $(/bin/cat /var/run/nginx.pid)"
+ExecReload=/bin/sh -c "/bin/kill -s HUP $(/bin/cat /run/nginx.pid)"
+ExecStop=/bin/sh -c "/bin/kill -s TERM $(/bin/cat /run/nginx.pid)"
 
 [Install]
 WantedBy=multi-user.target
