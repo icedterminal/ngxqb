@@ -19,7 +19,7 @@ A custom build of NGINX server for the modern web with OpenSSL 3+ (HTTP/3 + QUIC
 | [Brotli](https://github.com/google/ngx_brotli) | An improved compression method over GZip (zlib). [All major browsers](https://caniuse.com/?search=Brotli) currently support Brotli. There is little need for GZip, however, the latest version is included for priority over system installed zlib package. |
 | [Dev kit](https://github.com/vision5/ngx_devel_kit) | Extends NGINX functionality. Required by Set Misc. |
 | [Set Misc](https://github.com/openresty/set-misc-nginx-module) | Enables the use of `set_xxx` directives. These are required for services like [Authelia](https://www.authelia.com/integration/proxies/nginx/). |
-| [NGINX JS](https://hg.nginx.org/njs/) | Enables the use of [server-side JavaScript](https://www.nginx.com/blog/harnessing-power-convenience-of-javascript-for-each-request-with-nginx-javascript-module/). |
+| [NGINX JS](https://hg.nginx.org/njs/) | Enables the use of [server-side JavaScript](https://www.nginx.com/blog/harnessing-power-convenience-of-javascript-for-each-request-with-nginx-javascript-module/). *(Temporarily removed.)* |
 
 # Use
 You can either use the prebuilt binary, or build yourself. Installer packages are currently not provided.
