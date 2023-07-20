@@ -6,7 +6,7 @@ on:
       - '*'
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on:
       labels: debian
     steps:
     - name: Checkout
@@ -28,7 +28,7 @@ jobs:
         files: nginx-deb.zip
         token: ${{ github.token }}
   build:
-    runs-on: self-hosted
+    runs-on:
       labels: arch
     steps:
     - name: Checkout
