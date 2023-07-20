@@ -1,5 +1,6 @@
 # NGXQB
-[![C/C++ CI](https://github.com/icedterminal/ngxqb/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/icedterminal/ngxqb/actions/workflows/c-cpp.yml)
+[![Arch](https://github.com/icedterminal/ngxqb/actions/workflows/c-cpp-arch.yml/badge.svg)](https://github.com/icedterminal/ngxqb/actions/workflows/c-cpp-arch.yml)
+[![Debian](https://github.com/icedterminal/ngxqb/actions/workflows/c-cpp-debian.yml/badge.svg)](https://github.com/icedterminal/ngxqb/actions/workflows/c-cpp-debian.yml)
 <p align="center">
 :warning: <em>Absolutely no support is provided. This is for my own personal use. You are welcome to use it though.</em> :warning:
 </p>
@@ -24,26 +25,31 @@ A custom build of NGINX server for the modern web with OpenSSL 3+ (HTTP/3 + QUIC
 # Use
 You can either use the prebuilt binary, or build yourself. Installer packages are currently not provided.
 
-Note: The default web server user is `www-data` on Debian and `http` on Arch.
+Note: The default web server user is `www-data` on Debian and `http` on Arch. Please adjust the `nginx.conf` file accordingly.
 
 ## Prebuilt
 
 ### Initial
 1. Download the latest zip from releases to the root (`/`) of your system while elevated as the `root` user.
     ```
-    wget https://github.com/icedterminal/ngxqb/releases/latest/download/ngxqb.zip
+    wget https://github.com/icedterminal/ngxqb/releases/latest/download/nginx-arch.zip
+    wget https://github.com/icedterminal/ngxqb/releases/latest/download/ngxqb-debian.zip
     ```
 3. Extract the contents
     ```bash
-    unzip -o ngxqb.zip
+    unzip -o nginx-*.zip
     ```
 4. Set the permissions
     ```bash
     chown [www-data|http]:adm /var/log/nginx; chmod 755 /var/log/nginx; find /var/cache/nginx -type d | xargs chown [www-data|http]:root; find /var/cache/nginx -type d | xargs chmod 755
     ```
-5. Start the service
+5. Load the service.
     ```bash
-    systemctl daemon-reload; systemctl enable nginx; systemctl start nginx
+    systemctl daemon-reload; systemctl enable nginx
+    ```
+6. Verify the process user before you start the service!
+    ```
+    systemctl start nginx
     ```
 
 Visit [`http://localhost:80`](http://localhost:80) or [`http://127.0.0.1:80`](http://127.0.0.1:80). The default `nginx.conf` file uses the build prefix path of `/etc/nginx`. You should store configuration files here. Not web files. The default html files are placed here so you can verify you have a working service. You are encouraged to use `/var/www/html` as your root for web files. You can delete the zip file if you like as there is no need to keep it.
@@ -53,11 +59,12 @@ You can check your NGINX build information with `nginx -V`.
 ### Updates
 1. Download the latest zip from releases to the root (`/`) of your system while elevated as the `root` user.
     ```bash
-    wget https://github.com/icedterminal/ngxqb/releases/latest/download/ngxqb.zip
+    wget https://github.com/icedterminal/ngxqb/releases/latest/download/nginx-arch.zip
+    wget https://github.com/icedterminal/ngxqb/releases/latest/download/ngxqb-debian.zip
     ```
 3. Stop the service, Extract updated binary, start the service
     ```bash
-    systemctl stop nginx; unzip -oj ngxqb.zip "sbin/nginx" -d /sbin/; systemctl start nginx
+    systemctl stop nginx; unzip -oj nginx-*.zip "sbin/nginx" -d /sbin/; systemctl start nginx
     ```
 
 You can check your NGINX build information with `nginx -V`.
@@ -173,9 +180,13 @@ ExecStop=/bin/sh -c "/bin/kill -s TERM $(/bin/cat /run/nginx.pid)"
 [Install]
 WantedBy=multi-user.target
 ```
-Enable and start:
+Load the service.
 ```bash
-systemctl daemon-reload; systemctl enable nginx; systemctl start nginx
+systemctl daemon-reload; systemctl enable nginx
+```
+Verify the process user before you start the service!
+```
+systemctl start nginx
 ```
 
 You can check your NGINX build information with `nginx -V`.
