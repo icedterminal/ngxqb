@@ -27,7 +27,6 @@ jobs:
         fail_on_unmatched_files: true
         files: nginx-deb.zip
         token: ${{ github.token }}
-  build:
     runs-on:
       labels: arch
     steps:
