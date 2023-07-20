@@ -20,7 +20,7 @@ jobs:
       working-directory: ./nginx
       run: make
     - name: Create archive
-      run: mkdir archive; cd archive; mkdir -p etc/nginx/{dh,modules,sites-available,sites-disabled,conf.d,html} var/cache/nginx/{client_temp,proxy_temp,fastcgi_temp,uwsgi_temp,scgi_temp} var/log/nginx var/www/html sbin lib/systemd/system; cp -r ../nginx/conf/. etc/nginx/; cp -r ../nginx/docs/html/. etc/nginx/html/; cp ../nginx/objs/nginx sbin/nginx; cp ../nginx.service lib/systemd/system/nginx.service; zip -r ngxqb.zip *; mv ngxqb.zip ../ngxqb.zip
+      run: mkdir archive; cd archive; mkdir -p etc/nginx/{dh,modules,sites-available,sites-disabled,conf.d,html} var/cache/nginx/{client_temp,proxy_temp,fastcgi_temp,uwsgi_temp,scgi_temp} var/log/nginx var/www/html sbin lib/systemd/system; cp -r ../nginx/conf/. etc/nginx/; cp -r ../nginx/docs/html/. etc/nginx/html/; cp ../nginx/objs/nginx sbin/nginx; cp ../nginx.service lib/systemd/system/nginx.service; zip -r nginx-deb.zip *; mv nginx-deb.zip ../nginx-deb.zip
     - name: Release
       uses: softprops/action-gh-release@v0.1.15
       with:
