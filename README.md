@@ -25,15 +25,16 @@ A custom build of NGINX server for the modern web with OpenSSL 3+ (HTTP/3 + QUIC
 # Use
 You can either use the prebuilt binary, or build yourself. Installer packages are currently not provided.
 
-Note: The default web server user is `www-data` on Debian and `http` on Arch. Please adjust the `nginx.conf` file accordingly.
+https://www.icedterminal.me/ngxqb
 
+<!--
 ## Prebuilt
 
 ### Initial
 1. Download the latest zip from releases to the root (`/`) of your system while elevated as the `root` user.
     ```
     wget https://github.com/icedterminal/ngxqb/releases/latest/download/nginx-arch.zip
-    wget https://github.com/icedterminal/ngxqb/releases/latest/download/ngxqb-debian.zip
+    wget https://github.com/icedterminal/ngxqb/releases/latest/download/nginx-debian.zip
     ```
 3. Extract the contents
     ```bash
@@ -43,11 +44,11 @@ Note: The default web server user is `www-data` on Debian and `http` on Arch. Pl
     ```bash
     chown [www-data|http]:adm /var/log/nginx; chmod 755 /var/log/nginx; find /var/cache/nginx -type d | xargs chown [www-data|http]:root; find /var/cache/nginx -type d | xargs chmod 755
     ```
-5. Load the service.
+5. Load the service (If you do not specify a user in `nginx.conf`, the default user will be used).
     ```bash
     systemctl daemon-reload; systemctl enable nginx
     ```
-6. Verify the process user before you start the service!
+6. Start the service
     ```
     systemctl start nginx
     ```
@@ -60,7 +61,7 @@ You can check your NGINX build information with `nginx -V`.
 1. Download the latest zip from releases to the root (`/`) of your system while elevated as the `root` user.
     ```bash
     wget https://github.com/icedterminal/ngxqb/releases/latest/download/nginx-arch.zip
-    wget https://github.com/icedterminal/ngxqb/releases/latest/download/ngxqb-debian.zip
+    wget https://github.com/icedterminal/ngxqb/releases/latest/download/nginx-debian.zip
     ```
 3. Stop the service, Extract updated binary, start the service
     ```bash
@@ -194,3 +195,4 @@ You can check your NGINX build information with `nginx -V`.
 ## Verify
 - https://http3check.net/
 - https://geekflare.com/tools/http3-test
+-->

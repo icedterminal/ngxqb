@@ -1,4 +1,4 @@
-name: Build NGINX
+name: NGINX for Arch
 
 on:  
   push:
