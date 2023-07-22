@@ -1,5 +1,0 @@
-set bell-style audible
-set print-completions-horizontally on
-set completion-display-width 0
-set completion-ignore-case on
-set page-completions off
