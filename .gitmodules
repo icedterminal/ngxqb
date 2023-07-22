@@ -13,3 +13,9 @@
 [submodule "set-misc-nginx-module"]
 	path = set-misc-nginx-module
 	url = https://github.com/openresty/set-misc-nginx-module.git
+[submodule "nginx"]
+	path = nginx
+	url = https://github.com/nginx/nginx.git
+[submodule "njs"]
+	path = njs
+	url = https://github.com/nginx/njs.git
