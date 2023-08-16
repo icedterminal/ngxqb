@@ -26,4 +26,5 @@ jobs:
       with:
         fail_on_unmatched_files: true
         files: nginx-arch.zip
+        prerelease: true
         token: ${{ github.token }}
