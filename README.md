@@ -8,5 +8,3 @@ A custom build of NGINX server for the modern web with OpenSSL 3+ (HTTP/3 + QUIC
 
 # Use
 You can either use the prebuilt binary, or build yourself. Installer packages are currently not provided.
-
-https://www.icedterminal.me/ngxqb
