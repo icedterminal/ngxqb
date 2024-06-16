@@ -19,6 +19,3 @@
 [submodule "njs"]
 	path = njs
 	url = https://github.com/nginx/njs.git
-[submodule "ModSecurity-nginx"]
-	path = ModSecurity-nginx
-	url = https://github.com/owasp-modsecurity/ModSecurity-nginx.git
