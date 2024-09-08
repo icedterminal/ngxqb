@@ -16,3 +16,6 @@
 [submodule "njs"]
 	path = njs
 	url = https://github.com/nginx/njs.git
+[submodule "openssl"]
+	path = openssl
+	url = https://github.com/quictls/openssl.git
