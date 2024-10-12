@@ -29,5 +29,5 @@ jobs:
       with:
         fail_on_unmatched_files: true
         files: ngxqb.tar.gz
-        prerelease: false
+        prerelease: true
         token: ${{ github.token }}
