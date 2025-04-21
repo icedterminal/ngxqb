@@ -1,14 +1,18 @@
 name: Builder
 
-on:  
-  push:
-    tags:
-      - '*'
+on: push
+  #push:
+    #tags:
+      #- '*'
 jobs:
   build:
     runs-on: ubuntu-latest
       #labels: generic
     steps:
+    - name: Install deps
+      run: |
+        sudo apt-get update
+        sudo apt-get install libxml2
     - name: Checkout
       uses: actions/checkout@v3
       with:
