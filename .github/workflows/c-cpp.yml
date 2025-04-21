@@ -1,9 +1,9 @@
 name: Builder
 
-on: push
-  #push:
-    #tags:
-      #- '*'
+on:
+  push:
+    tags:
+      - '*'
 jobs:
   build:
     runs-on: ubuntu-latest
