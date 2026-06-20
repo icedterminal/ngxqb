@@ -1,3 +1,6 @@
+# RETIRED
+NGINX 1.30+ along with OpenSSL 3.5+ means this fork is no longer needed. Will remove at a later date.
+
 # NGXQB
 [![Automated Builder](https://github.com/icedterminal/ngxqb/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/icedterminal/ngxqb/actions/workflows/c-cpp.yml)
 <p align="center">
